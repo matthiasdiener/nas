@@ -179,7 +179,7 @@ ifeq ($(SYST), SunOS)
 #---------------------------------------------------------------------------
 # This is the fortran compiler used for Fortran programs
 #---------------------------------------------------------------------------
-F77 = f77 
+F77 = f90
 # This links fortran programs; usually the same as ${F77}
 FLINK	= $(F77)
 
@@ -196,13 +196,13 @@ F_INC =
 #---------------------------------------------------------------------------
 # Global *compile time* flags for Fortran programs
 #---------------------------------------------------------------------------
-FFLAGS	= -xO3 -xopenmp
+FFLAGS	= -f77 -ftrap=%none -xO3 -xopenmp
 
 #---------------------------------------------------------------------------
 # Global *link time* flags. Flags for increasing maximum executable 
 # size usually go here. 
 #---------------------------------------------------------------------------
-FLINKFLAGS = -xO3 -xopenmp
+FLINKFLAGS = -f77 -ftrap=%none  -xO3 -xopenmp
 
 
 #---------------------------------------------------------------------------
