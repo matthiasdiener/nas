@@ -95,6 +95,7 @@ c      common /bigarrays/ u0, pad1, u1, pad2, u2, pad3, twiddle
       logical verified
       character class
 
+      call mapping_lib_fortran_c_interface_omp_automate()
 c---------------------------------------------------------------------
 c Run the entire problem once to make sure all data is touched. 
 c This reduces variable startup costs, which is important for such a 

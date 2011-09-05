@@ -53,6 +53,7 @@
 #include <omp.h>
 #endif
 
+#include <mapping-lib.h>
 
 #include "adc.h"
 #include "macrodef.h"
@@ -102,6 +103,8 @@ int main ( int argc, char * argv[] )
   ADC_PAR *parp;
   ADC_VIEW_PARS *adcpp;
   int32 retCode;
+  
+  mapping_lib_omp_automate(0);
 
   fprintf(stdout,"\n\n NAS Parallel Benchmarks (NPB3.3-OMP) - DC Benchmark\n\n" );
   if(argc!=3){

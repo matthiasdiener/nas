@@ -7,6 +7,8 @@
 #include <omp.h>
 #endif
 
+#include <mapping-lib.h>
+
 void c_print_results( char   *name,
                       char   class,
                       int    n1, 
@@ -31,6 +33,8 @@ void c_print_results( char   *name,
 
     max_threads = 1;
     num_threads = 1;
+    
+    mapping_lib_omp_automate_finish();
 
 /*   figure out number of threads used */
 #ifdef _OPENMP

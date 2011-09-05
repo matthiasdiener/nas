@@ -47,9 +47,11 @@ dc: header
 	cd DC; $(MAKE) CLASS=$(CLASS)
 
 # Awk script courtesy cmg@cray.com, modified by Haoqiang Jin
-suite:
+suite: mappinglib
 	@ awk -f sys/suite.awk SMAKE=$(MAKE) $(SFILE) | $(SHELL)
 
+mappinglib:
+	gcc -o bin/mapping-lib.o -c ../../libmapping/fortran-c-interface.c -O2 -fopenmp -DENABLE_OPENMP #-DMAPPING_LIB_WITH_PAPI
 
 # It would be nice to make clean in each subdirectory (the targets
 # are defined) but on a really clean system this will won't work
@@ -63,7 +65,7 @@ clean:
 
 veryclean: clean
 
-header:
+header: mappinglib
 	@ sys/print_header
 
 

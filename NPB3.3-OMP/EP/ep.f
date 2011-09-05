@@ -84,6 +84,7 @@ c   not affect the results.
 !$    external omp_get_max_threads
       data             dum /1.d0, 1.d0, 1.d0/
 
+      call mapping_lib_fortran_c_interface_omp_automate()
 
       open(unit=2, file='timer.flag', status='old', iostat=fstatus)
       if (fstatus .eq. 0) then

@@ -65,7 +65,8 @@ c---------------------------------------------------------------------
 c      Root node reads input file (if it exists) else takes
 c      defaults from parameters
 c---------------------------------------------------------------------
-          
+       call mapping_lib_fortran_c_interface_omp_automate()
+       
        open (unit=2,file='timer.flag',status='old', iostat=fstatus)
        if (fstatus .eq. 0) then
          timeron = .true.
