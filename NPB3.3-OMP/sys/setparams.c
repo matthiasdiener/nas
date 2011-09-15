@@ -733,7 +733,7 @@ void write_compiler_info(int type, FILE *fp)
   time_t t;
   
   //%%%
-  system("make -R -r -p -n -f ../config/make.def > ../config/make-comp.def");
+  system("make -R -r -p -n -f ../config/make.def > ../config/make-comp.def 2>&1");
   
   deffile = fopen(DEFFILE, "r");
   if (deffile == NULL) {
