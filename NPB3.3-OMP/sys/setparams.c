@@ -719,7 +719,7 @@ void write_ep_info(FILE *fp, char class)
 
 #define VERBOSE
 #define LL 400
-#define DEFFILE "../config/make.def"
+#define DEFFILE "../config/make-comp.def"
 #define DEFAULT_MESSAGE "(none)"
 FILE *deffile;
 void write_compiler_info(int type, FILE *fp)
@@ -731,6 +731,10 @@ void write_compiler_info(int type, FILE *fp)
        c_lib[LL], c_inc[LL];
   struct tm *tmp;
   time_t t;
+  
+  //%%%
+  system("make -R -r -p -n -f ../config/make.def > ../config/make-comp.def");
+  
   deffile = fopen(DEFFILE, "r");
   if (deffile == NULL) {
     printf("\n\
@@ -771,7 +775,8 @@ setparams: File %s doesn't exist. To build the NAS benchmarks\n\
     check_line(line, "C_LIB", c_lib);
     check_line(line, "C_INC", c_inc);
   }
-
+  
+  system("rm ../config/make-comp.def");
   
   (void) time(&t);
   tmp = localtime(&t);
