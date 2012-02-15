@@ -14,9 +14,11 @@ void remap_time_step(int step)
 		init = 1;
 	}
 	
-	printf("xxx %d", step);
-	//setaffinity()
-	
+	//printf("xxx %d", step);
+
+	#ifdef MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
+		mapping_lib_remap(0, step);
+	#endif
 }
 
 // fortran interface
