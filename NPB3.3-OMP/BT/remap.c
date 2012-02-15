@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 
 
 void remap_(int* step) {
@@ -8,7 +9,12 @@ void remap_(int* step) {
 	
 }
 
-
+void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
+{
+	static uint64_t n = 0;
+	printf("ooooooooooooo %llu\n", n++);
+	return __real_GOMP_parallel_start(func, data, nt);
+}
 
 
 static void initialize_dynmap_() {
