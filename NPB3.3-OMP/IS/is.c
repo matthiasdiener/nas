@@ -988,6 +988,7 @@ int main( int argc, char **argv )
     for( iteration=1; iteration<=MAX_ITERATIONS; iteration++ )
     {
         if( CLASS != 'S' ) printf( "        %d\n", iteration );
+        remap_time_step(iteration);
         rank( iteration );
     }
 

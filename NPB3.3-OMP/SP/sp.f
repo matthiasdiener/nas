@@ -156,6 +156,8 @@ c---------------------------------------------------------------------
              write(*, 200) step
  200         format(' Time step ', i4)
           endif
+          
+          call remap_time_step(step)
 
           call adi
 

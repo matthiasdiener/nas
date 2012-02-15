@@ -113,6 +113,8 @@ c---------------------------------------------------------------------
             if (niter .gt. 1) write( *, 200) istep
  200        format(' Time step ', i4)
          endif
+         
+         call remap_time_step(istep)
  
 c---------------------------------------------------------------------
 c   perform SSOR iteration

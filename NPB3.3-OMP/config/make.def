@@ -29,7 +29,7 @@ FLINK	= $(F77)
 #---------------------------------------------------------------------------
 # These macros are passed to the linker 
 #---------------------------------------------------------------------------
-F_LIB  = ../bin/mapping-lib.o
+F_LIB  = ../bin/mapping-lib.o ../bin/remap.o
 #---------------------------------------------------------------------------
 # These macros are passed to the compiler 
 #---------------------------------------------------------------------------
@@ -38,13 +38,13 @@ F_INC =
 #---------------------------------------------------------------------------
 # Global *compile time* flags for Fortran programs
 #---------------------------------------------------------------------------
-FFLAGS	= -O2 -fopenmp -Wl,-wrap,GOMP_parallel_start
+FFLAGS	= -O2 -fopenmp
 
 #---------------------------------------------------------------------------
 # Global *link time* flags. Flags for increasing maximum executable 
 # size usually go here. 
 #---------------------------------------------------------------------------
-FLINKFLAGS = -O2 -fopenmp -Wl,-wrap,GOMP_parallel_start
+FLINKFLAGS = -O2 -fopenmp
 
 
 #---------------------------------------------------------------------------
@@ -74,7 +74,7 @@ CLINK	= $(CC)
 #---------------------------------------------------------------------------
 # These macros are passed to the linker 
 #---------------------------------------------------------------------------
-C_LIB  = -lm ../bin/mapping-lib.o
+C_LIB  = -lm ../bin/mapping-lib.o ../bin/remap.o
 
 #---------------------------------------------------------------------------
 # These macros are passed to the compiler 
@@ -96,13 +96,13 @@ C_INC = -I../../../libmapping
 # _LARGEFILE64_SOURCE - are standard compiler flags which allow to work with 
 # files larger than 2GB.
 #---------------------------------------------------------------------------
-CFLAGS	= -O2 -fopenmp -Wl,-wrap,GOMP_parallel_start
+CFLAGS	= -O2 -fopenmp
 
 #---------------------------------------------------------------------------
 # Global *link time* flags. Flags for increasing maximum executable 
 # size usually go here. 
 #---------------------------------------------------------------------------
-CLINKFLAGS = -O2 -fopenmp -Wl,-wrap,GOMP_parallel_start
+CLINKFLAGS = -O2 -fopenmp
 
 
 #---------------------------------------------------------------------------

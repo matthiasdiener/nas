@@ -353,6 +353,8 @@ c---------------------------------------------------------------------
          zeta = shift + 1.0d0 / norm_temp1
          if( it .eq. 1 ) write( *,9000 )
          write( *,9001 ) it, rnorm, zeta
+         
+         call remap_time_step(it)
 
  9000    format( /,'   iteration           ||r||                 zeta' )
  9001    format( 4x, i5, 7x, e20.14, f20.13 )

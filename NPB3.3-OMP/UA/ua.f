@@ -236,6 +236,9 @@ c.......perform mesh adaptation
         else
           ifmortar = .false.
         end if
+        
+        call remap_time_step(step)
+        
         nelt_tot = nelt_tot + dble(nelt)
       end do
 

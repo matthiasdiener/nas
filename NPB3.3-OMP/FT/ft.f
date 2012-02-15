@@ -872,6 +872,7 @@ c---------------------------------------------------------------------
       
       write (*, 30) i, chk
  30   format (' T =',I5,5X,'Checksum =',1P2D22.12)
+      call remap_time_step(i)
       sums(i) = chk
       return
       end

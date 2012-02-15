@@ -256,6 +256,7 @@ c---------------------------------------------------------------------
             write(*,80) it
    80       format('  iter ',i3)
          endif
+         call remap_time_step(it)
          if (timeron) call timer_start(T_mg3P)
          call mg3P(u,v,r,a,c,n1,n2,n3,k)
          if (timeron) call timer_stop(T_mg3P)
