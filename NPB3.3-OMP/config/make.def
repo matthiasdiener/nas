@@ -1,6 +1,8 @@
 
 SYST:=$(shell uname)
 
+WRAP = -Wl,-wrap,GOMP_parallel_start -Wl,-wrap,GOMP_parallel_end -Wl,-wrap,GOMP_barrier
+
 #---------------------------------------------------------------------------
 # Parallel Fortran:
 #
@@ -38,13 +40,13 @@ F_INC =
 #---------------------------------------------------------------------------
 # Global *compile time* flags for Fortran programs
 #---------------------------------------------------------------------------
-FFLAGS	= -O2 -fopenmp
+FFLAGS	= -O2 -fopenmp $(WRAP)
 
 #---------------------------------------------------------------------------
 # Global *link time* flags. Flags for increasing maximum executable 
 # size usually go here. 
 #---------------------------------------------------------------------------
-FLINKFLAGS = -O2 -fopenmp
+FLINKFLAGS = -O2 -fopenmp $(WRAP)
 
 
 #---------------------------------------------------------------------------
@@ -96,13 +98,13 @@ C_INC = -I../../../libmapping
 # _LARGEFILE64_SOURCE - are standard compiler flags which allow to work with 
 # files larger than 2GB.
 #---------------------------------------------------------------------------
-CFLAGS	= -O2 -fopenmp
+CFLAGS	= -O2 -fopenmp $(WRAP)
 
 #---------------------------------------------------------------------------
 # Global *link time* flags. Flags for increasing maximum executable 
 # size usually go here. 
 #---------------------------------------------------------------------------
-CLINKFLAGS = -O2 -fopenmp
+CLINKFLAGS = -O2 -fopenmp $(WRAP)
 
 
 #---------------------------------------------------------------------------

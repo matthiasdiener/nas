@@ -1,6 +1,14 @@
 #include <stdio.h>
 #include <stdint.h>
 
+/*
+	types:
+		0: time step
+		1: parallel_start
+		2: parallel_end
+		3: barrier
+*/
+
 static void initialize_dynmap()
 {
 }
@@ -27,12 +35,41 @@ void remap_time_step_(int *step)
 	remap_time_step(*step);	
 }
 
-/*void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)*/
-/*{*/
-/*	static uint64_t n = 0;*/
-/*	printf("ooooooooooooo %llu\n", n++);*/
-/*	return __real_GOMP_parallel_start(func, data, nt);*/
-/*}*/
+void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
+{
+	static uint64_t n = 0;
+	//printf("pstart %llu\n", n);
+	#ifdef MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
+		mapping_lib_remap(1, n);
+	#endif
+	n++;
+	return __real_GOMP_parallel_start(func, data, nt);
+}
+
+void *__wrap_GOMP_parallel_end()
+{
+	static uint64_t n = 0;
+	__real_GOMP_parallel_end();
+	//printf("pend %llu\n", n);
+	#ifdef MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
+		mapping_lib_remap(2, n);
+	#endif
+	n++;
+}
+
+void *__wrap_GOMP_barrier()
+{
+	static uint64_t n = 0;
+	__real_GOMP_barrier();
+	#pragma omp master
+	{
+		//printf("pbarrier %llu\n", n);
+		#ifdef MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
+			mapping_lib_remap(3, n);
+		#endif
+		n++;
+	}
+}
 
 
 /*extern gomp_resolve_num_threads (int);*/
