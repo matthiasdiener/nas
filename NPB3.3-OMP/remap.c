@@ -37,7 +37,7 @@ void remap_time_step_(int *step)
 
 void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
 {
-	static uint64_t n = 0;
+	static uint32_t n = 0;
 	//printf("pstart %llu\n", n);
 	#ifdef MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
 		mapping_lib_remap(1, n);
@@ -48,7 +48,7 @@ void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
 
 void *__wrap_GOMP_parallel_end()
 {
-	static uint64_t n = 0;
+	static uint32_t n = 0;
 	__real_GOMP_parallel_end();
 	//printf("pend %llu\n", n);
 	#ifdef MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
@@ -59,7 +59,7 @@ void *__wrap_GOMP_parallel_end()
 
 void *__wrap_GOMP_barrier()
 {
-	static uint64_t n = 0;
+	static uint32_t n = 0;
 	__real_GOMP_barrier();
 	#pragma omp master
 	{
