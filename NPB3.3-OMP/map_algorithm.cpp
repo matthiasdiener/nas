@@ -124,8 +124,10 @@ void floyd_warshall_t<TGRAPH, TWEIGHT, TEDGEMAP>::run()
 	for (uint32_t i=0; i<this->nvertex-1; i++) {
 		this->set(i, i, 0);
 		for (uint32_t j=i+1; j<this->nvertex; j++) {
-			this->set(i, j, std::numeric_limits<TWEIGHT>::max());
-			this->set(j, i, std::numeric_limits<TWEIGHT>::max());
+//			this->set(i, j, std::numeric_limits<TWEIGHT>::max());
+//			this->set(j, i, std::numeric_limits<TWEIGHT>::max());
+			this->set(i, j, std::numeric_limits<uint16_t>::max());
+			this->set(j, i, std::numeric_limits<uint16_t>::max());
 		}
 	}
 	
@@ -139,8 +141,10 @@ void floyd_warshall_t<TGRAPH, TWEIGHT, TEDGEMAP>::run()
 			for (uint32_t j=0; j<this->nvertex; j++) {
 				TWEIGHT sum;
 				sum = this->get(i, k) + this->get(k, j);
-				if (this->get(i, j) > sum)
+				//printf("sum is %llu\n", sum);
+				if (this->get(i, j) > sum) {
 					this->set(i, j, sum);
+				}
 			}
 		}
 	}
@@ -148,10 +152,13 @@ void floyd_warshall_t<TGRAPH, TWEIGHT, TEDGEMAP>::run()
 
 /*****************************************/
 
-static SmartGraph graph;
-static SmartGraph::Node *nodes;
-static SmartGraph::Edge *edges;
+//static SmartGraph graph;
+//static SmartGraph::Node *nodes;
+//static SmartGraph::Edge *edges;
 //static SmartGraph::EdgeMap<uint64_t> weight(graph);
+
+static uint16_t **distance_between_cores;
+static uint16_t nthreads;
 
 /*****************************************/
 
@@ -162,6 +169,14 @@ static void load_harpertown_hierarchy()
 	SmartGraph::Edge edges[14];
 	uint32_t i;
 	SmartGraph::EdgeMap<uint64_t> weight(graph);
+	
+	nthreads = 8;
+	distance_between_cores = (uint16_t**)calloc(nthreads, sizeof(uint16_t*));
+	assert(distance_between_cores != NULL);
+	distance_between_cores[0] = (uint16_t*)calloc(nthreads*nthreads, sizeof(uint16_t));
+	assert(distance_between_cores[0] != NULL);
+	for (i=1; i<nthreads; i++)
+		distance_between_cores[i] = distance_between_cores[0] + i*nthreads;
 	
 	for (i=0; i<8; i++) {
 		nodes_cores[i] = graph.addNode();
@@ -203,7 +218,7 @@ static void load_harpertown_hierarchy()
 	
 	// link root node
 	edges[12] = graph.addEdge(nodes_procs[0], node_root);
-	edges[13] = graph.addEdge(nodes_procs[0], node_root);
+	edges[13] = graph.addEdge(nodes_procs[1], node_root);
 
 	for (i=0; i<14; i++) {
 		weight[edges[i]] = 1;
@@ -215,15 +230,18 @@ static void load_harpertown_hierarchy()
 	
 	floyd.run();
 
-	uint32_t nnodes=15;
-//	for (i=0; i<nnodes; i++) {
-//		for (uint32_t j=0; j<nnodes; j++) {
-//			std::cout << "distancia " << i << " e " << j << " eh " << floyd.get(i, j) << "\n";
+	for (i=0; i<8; i++) {
+		for (uint32_t j=0; j<8; j++) {
+			//std::cout << "distancia " << i << " e " << j << " eh " << floyd.get(i, j) << "\n";
+			distance_between_cores[i][j] = floyd.get(i, j) / 2;
+		}
+	}
+	
+//	for (i=0; i<8; i++) {
+//		for (uint32_t j=0; j<8; j++) {
+//			std::cout << "distancia " << i << " e " << j << " eh " << distance_between_cores[i][j] << "\n";
 //		}
 //	}
-	for (i=0; i<nnodes; i++) {
-		std::cout << "distancia " << 0 << " e " << i << " eh " << floyd.get(0, i) << "\n";
-	}
 }
 
 /*****************************************/
