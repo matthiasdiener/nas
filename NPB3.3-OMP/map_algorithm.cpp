@@ -151,6 +151,12 @@ static mapping_hierarchy_t machine = MAPPING_HIERARCHY_NULL;
 
 /*****************************************/
 
+static uint32_t core_ids_harpertown[] = { 0, 2, 4, 6, 1, 3, 5, 7 };
+
+static uint32_t *core_ids = NULL;
+
+/*****************************************/
+
 static void load_harpertown_hierarchy()
 {
 	SmartGraph graph;
@@ -160,6 +166,7 @@ static void load_harpertown_hierarchy()
 	SmartGraph::EdgeMap<uint64_t> weight(graph);
 	
 	machine = MAPPING_HIERARCHY_HARPERTOWN;
+	core_ids = core_ids_harpertown;
 	
 	nthreads = 8;
 	distance_between_cores = (uint16_t**)calloc(nthreads, sizeof(uint16_t*));
@@ -242,7 +249,7 @@ struct tm_result_node_t {
 
 #define COREID_NONCORE 0xFFFFFFFF
 
-static void generate_matching(SmartGraph& graph, SmartGraph::Node *nodes, SmartGraph::Edge *edges, SmartGraph::EdgeMap<uint64_t>& weight, SmartGraph::NodeMap<tm_result_node_t>& nodemap, tm_result_node_t *pairs_found, int *found_buffer, uint32_t nnodes)
+static void generate_matching(SmartGraph& graph, SmartGraph::Node *nodes, SmartGraph::Edge *edges, SmartGraph::EdgeMap<uint64_t>& weight, SmartGraph::NodeMap<tm_result_node_t>& nodemap, tm_result_node_t *node_pairs, int *found_buffer, uint32_t nnodes)
 {
 	uint32_t i, z;
 	
@@ -259,12 +266,29 @@ static void generate_matching(SmartGraph& graph, SmartGraph::Node *nodes, SmartG
 			found_buffer[graph.id(nodes[i])] = 1;
 			found_buffer[graph.id(edmonds.mate(nodes[i]))] = 1;
 		
-			node_pairs[z].left = nodemap[ nodes[i] ];
-			node_pairs[z].right = nodemap[ edmonds.mate(nodes[i]) ];
+			node_pairs[z].left = &nodemap[ nodes[i] ];
+			node_pairs[z].right = &nodemap[ edmonds.mate(nodes[i]) ];
 			
 			z++;
 		}
 	}
+}
+
+static void generate_coreid_vector_(tm_result_node_t *node_pairs, uint32_t *vector, uint32_t& pos)
+{
+	if (node_pairs->coreid == COREID_NONCORE) {
+		generate_coreid_vector_(node_pairs->left, vector, pos);
+		generate_coreid_vector_(node_pairs->right, vector, pos);
+	}
+	else {
+		vector[node_pairs->coreid] = core_ids[pos++];
+	}
+}
+
+static void generate_coreid_vector(tm_result_node_t *node_pairs, uint32_t *vector)
+{
+	uint32_t pos = 0;
+	generate_coreid_vector_(node_pairs->right, vector, pos);
 }
 
 static void generate_thread_mapping_harpertown(thread_mapping_t *tm)
@@ -272,6 +296,7 @@ static void generate_thread_mapping_harpertown(thread_mapping_t *tm)
 	uint32_t i, j, z;
 
 	int found1[8];
+	tm_result_node_t node_pairs1[4];
 	uint32_t nedges1, nnodes1;
 
 	SmartGraph graph1;
@@ -299,7 +324,7 @@ static void generate_thread_mapping_harpertown(thread_mapping_t *tm)
 	for (i=0; i<nnodes1-1; i++) {
 		for (j=i+1; j<nnodes1; j++) {
 			edges1[z] = graph1.addEdge(nodes1[i], nodes1[j]);
-			weight1[edges1[z]] = tm->comm_matrix[i][j];
+			weight1[edges1[z]] = tm->comm_matrix[ nodemap1[nodes1[i]].coreid ][ nodemap1[nodes1[j]].coreid ];
 			z++;
 		}
 	}
@@ -312,20 +337,22 @@ static void generate_thread_mapping_harpertown(thread_mapping_t *tm)
 		}
 	}*/
 
-	generate_matching(graph1, nodes1, edges1, weight1, found1, nnodes1);
+	generate_matching(graph1, nodes1, edges1, weight1, nodemap1, node_pairs1, found1, nnodes1);
 
 	delete nodes1;
 	delete edges1;
 	
 	/* regenerate communication matrix */
 
-	int found2[4], found1_verified[8];
+	int found2[4];
+	tm_result_node_t node_pairs2[2];
 	uint32_t nedges2, nnodes2;
 
 	SmartGraph graph2;
 	SmartGraph::Node *nodes2;
 	SmartGraph::Edge *edges2;
 	SmartGraph::EdgeMap<uint64_t> weight2(graph2);
+	SmartGraph::NodeMap<tm_result_node_t> nodemap2(graph2);
 
 	nnodes2 = nthreads / 2;
 
@@ -335,56 +362,34 @@ static void generate_thread_mapping_harpertown(thread_mapping_t *tm)
 	nodes2 = new SmartGraph::Node[nnodes2];
 	edges2 = new SmartGraph::Edge[nedges2];
 	
-	for (i=0; i<nthreads; i++) {
-		found1_verified[i] = 0;
-	}
-
-	z = 0;
-	for (i=0; i<nthreads; i++) {
-		if (found1_verified[i] == 0) {
-			found1_verified[i] = 1;
-			found1_verified[found1[i]] = 1;
-			
-			nodes2[z] = graph2.addNode();
-			nodemap2[ nodes2[z] ].coreid = COREID_NONCORE;
-			nodemap2[ nodes2[z] ].left = &nodemap1[ nodes1[] ];
-			
-			z++;
-		}
-	}
-	
 	for (i=0; i<nnodes2; i++) {
-		nodes2[i] = graph2.addNode();
-		nodemap2[ nodes2[i] ].coreid = COREID_NONCORE;
-		nodemap2[ nodes2[i] ].left = NULL;
-		nodemap2[ nodes2[i] ].right = NULL;
+			nodes2[i] = graph2.addNode();
+			nodemap2[ nodes2[i] ].coreid = COREID_NONCORE;
+			nodemap2[ nodes2[i] ].left = node_pairs1[i].left;
+			nodemap2[ nodes2[i] ].right = node_pairs1[i].right;
 	}
 	
 	z = 0;
 	for (i=0; i<nnodes2-1; i++) {
 		for (j=i+1; j<nnodes2; j++) {
 			edges2[z] = graph2.addEdge(nodes2[i], nodes2[j]);
-			weight2[edges2[z]] = tm->comm_matrix[i][j];
-			z++;
-		}
-	}
-	
-	z = 0;
-	for (i=0; i<nthreads; i++) {
-		edges2[z] = graph2.addEdge(nodes2[i], nodes2[found[i]]);
-		
-		z++;
-	}
-	
-	/*z = 0;
-	for (i=0; i<nnodes2-1; i++) {
-		for (j=i+1; j<nnodes2; j++) {
-			weight2[edges2[z]] = tm->comm_matrix[i][j];
-			z++;
-		}
-	}*/
+			
+			// A: i->left
+			// B: i->right
+			// C: j->left
+			// D: j->right
+			
+			weight2[edges2[z]] = tm->comm_matrix[ nodemap2[nodes2[i]].left->coreid ][ nodemap2[nodes2[j]].left->coreid ]
+			                   + tm->comm_matrix[ nodemap2[nodes2[i]].left->coreid ][ nodemap2[nodes2[j]].right->coreid ]
+			                   + tm->comm_matrix[ nodemap2[nodes2[i]].right->coreid ][ nodemap2[nodes2[j]].left->coreid ]
+			                   + tm->comm_matrix[ nodemap2[nodes2[i]].right->coreid ][ nodemap2[nodes2[j]].right->coreid ]
+			                   ;
 
-	generate_matching(graph2, nodes2, edges2, weight2, found2, nnodes2);
+			z++;
+		}
+	}
+	
+	generate_matching(graph2, nodes2, edges2, weight2, nodemap2, node_pairs2, found2, nnodes2);
 
 	delete nodes2;
 	delete edges2;
