@@ -11,6 +11,9 @@
 
 static void initialize_dynmap()
 {
+	wrapper_load_harpertown_hierarchy();
+	
+	printf("mapping initialized!\n");
 }
 
 void remap_time_step(int step)
