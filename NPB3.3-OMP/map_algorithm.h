@@ -12,7 +12,7 @@ extern "C"
 
 	struct thread_mapping_t {
 		uint32_t *map;
-		uint64_t *comm_matrix;
+		uint64_t **comm_matrix;
 		uint32_t nthreads;
 	};
 	
