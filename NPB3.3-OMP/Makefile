@@ -53,7 +53,7 @@ suite: mappinglib
 mappinglib:
 	gcc -o bin/mapping-lib.o -c ../../libmapping/fortran-c-interface.c -O2 -fopenmp -DENABLE_OPENMP #-DMAPPING_LIB_WITH_PAPI #-DMAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
 	gcc -o bin/remap.o -c remap.c -O2 -fopenmp -DENABLE_OPENMP #-DMAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
-	g++ -o bin/map_algorithm.o -c map_algorithm.cpp -O2 -fopenmp -g
+	g++ -o bin/map_algorithm.o -c ../../libmapping/map_algorithm.cpp -O2 -fopenmp -g
 
 # It would be nice to make clean in each subdirectory (the targets
 # are defined) but on a really clean system this will won't work
