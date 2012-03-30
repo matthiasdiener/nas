@@ -9,22 +9,8 @@
 		3: barrier
 */
 
-static void initialize_dynmap()
-{
-	wrapper_load_harpertown_hierarchy();
-	
-	printf("mapping initialized!\n");
-}
-
 void remap_time_step(int step)
 {
-	static int init = 0;
-	
-	if (!init) {
-		initialize_dynmap();
-		init = 1;
-	}
-	
 	//printf("xxx %d", step);
 
 	#ifdef MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
