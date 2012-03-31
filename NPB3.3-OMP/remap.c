@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <assert.h>
+
+#include <map_algorithm.h>
 
 /*
 	types:
@@ -9,12 +12,44 @@
 		3: barrier
 */
 
+static uint32_t *current_map;
+static uint16_t nthreads;
+
+static void check_init()
+{
+	static char init = 0;
+	if (!init) {
+		init = 1;
+		assert(wrapper_dynmap_initiaized());
+		
+		nthreads = wrapper_get_threads();
+		current_map = (uint32_t*)calloc(nthreads, sizeof(uint32_t));
+		assert(current_map != NULL);
+	}
+}
+
 void remap_time_step(int step)
 {
+	check_init();
+	
 	//printf("xxx %d", step);
 
 	#ifdef MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
 		mapping_lib_remap(0, step);
+	#endif
+
+	#ifdef MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE
+		{
+			thread_mapping_t *tm;
+			
+			tm = wrapper_get_comm_pattern(0, step);
+			assert(tm != NULL);
+			
+			//{int i, j; printf("comm matrix(type %i value %i)\n", 0, step); for (i=0; i<tm->nthreads; i++) { for (j=0; j<tm->nthreads; j++) { printf("  %llu", tm->comm_matrix[i][j]); } printf("\n"); } printf("\n"); }
+			
+			tm->map = current_map;
+			wrapper_generate_thread_mapping(tm);
+		}
 	#endif
 }
 
@@ -27,6 +62,9 @@ void remap_time_step_(int *step)
 void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
 {
 	static uint32_t n = 0;
+	
+	check_init();
+	
 	//printf("pstart %llu\n", n);
 	#ifdef MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
 		mapping_lib_remap(1, n);
@@ -38,6 +76,9 @@ void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
 void *__wrap_GOMP_parallel_end()
 {
 	static uint32_t n = 0;
+	
+	check_init();
+	
 	__real_GOMP_parallel_end();
 	//printf("pend %llu\n", n);
 	#ifdef MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
@@ -49,6 +90,9 @@ void *__wrap_GOMP_parallel_end()
 void *__wrap_GOMP_barrier()
 {
 	static uint32_t n = 0;
+	
+	check_init();
+	
 	__real_GOMP_barrier();
 	#pragma omp master
 	{
