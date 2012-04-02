@@ -46,8 +46,8 @@ static void check_init()
 		static uint32_t n_migrations = 0;
 		uint32_t diff, i;
 		
-		if (type != 0)
-			return;
+//		if (type != 0)
+//			return;
 
 		tm->map = new_map;
 		wrapper_generate_thread_mapping(tm);
