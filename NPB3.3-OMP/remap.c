@@ -59,10 +59,14 @@ static void check_init()
 			printf("migrando %i diff %u\n", n_migrations, diff);
 
 //			{ int i; printf("new map type %i: ", type); for (i=0; i<nthreads; i++) { printf("%i,", new_map[i]); } printf("\n"); }
+
+			for (i=0; i<nthreads; i++) { // migrate
+				mapping_lib_set_aff_of_thread(i, new_map[i]);
+			}
+
+			for (i=0; i<nthreads; i++)
+				current_map[i] = new_map[i];
 		}
-		
-		for (i=0; i<nthreads; i++)
-			current_map[i] = new_map[i];
 	}
 #endif
 
