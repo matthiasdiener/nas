@@ -23,7 +23,7 @@ static void check_init()
 	static char init = 0;
 	if (!init) {
 		init = 1;
-		assert(wrapper_dynmap_initiaized());
+		assert(wrapper_dynmap_initialized());
 		
 		nthreads = wrapper_get_threads();
 
