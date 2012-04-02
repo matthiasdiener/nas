@@ -35,8 +35,8 @@ static void check_init()
 		
 		mapping_lib_copy_initial_map(current_map);
 
-		{ int i; for (i=0; i<nthreads; i++) { current_map[i] = 0; } }
-		//{ int i; printf("init with map: "); for (i=0; i<nthreads; i++) { printf("%i,", current_map[i]); } printf("\n"); }
+		//{ int i; for (i=0; i<nthreads; i++) { current_map[i] = 0; } }
+		{ int i; printf("init with map: "); for (i=0; i<nthreads; i++) { printf("%i,", current_map[i]); } printf("\n"); }
 	}
 }
 
