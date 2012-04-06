@@ -13,7 +13,12 @@
 		3: barrier
 */
 
-static uint32_t *current_map, *new_map;
+static uint32_t *current_map;
+
+#ifndef MPLIB_MAPPING_ALGORITHM_STATIC
+	static uint32_t *new_map;
+#endif
+
 static uint16_t nthreads;
 
 //static thread_mapping_t map;
@@ -29,9 +34,11 @@ static void check_init()
 
 		current_map = (uint32_t*)calloc(nthreads, sizeof(uint32_t));
 		assert(current_map != NULL);
-		
-		new_map = (uint32_t*)calloc(nthreads, sizeof(uint32_t));
-		assert(new_map != NULL);
+
+		#ifndef MPLIB_MAPPING_ALGORITHM_STATIC		
+			new_map = (uint32_t*)calloc(nthreads, sizeof(uint32_t));
+			assert(new_map != NULL);
+		#endif
 		
 		mapping_lib_copy_initial_map(current_map);
 
@@ -49,23 +56,25 @@ static void check_init()
 //		if (type != 0)
 //			return;
 
-		tm->map = new_map;
-		wrapper_generate_thread_mapping(tm);
+		#ifndef MPLIB_MAPPING_ALGORITHM_STATIC
+			tm->map = new_map;
+			wrapper_generate_thread_mapping(tm);
+		#endif
 		
-		diff = wrapper_generate_difference_between_mappings(current_map, new_map, tm->nthreads);
-//		{ int i; printf("new map type %i: ", type); for (i=0; i<nthreads; i++) { printf("%i,", new_map[i]); } printf("\n diff %i\n\n", diff); } getchar();
+		diff = wrapper_generate_difference_between_mappings(current_map, tm->map, tm->nthreads);
+//		{ int i; printf("new map type %i: ", type); for (i=0; i<nthreads; i++) { printf("%i,", tm->map[i]); } printf("\n diff %i\n\n", diff); } getchar();
 		if (diff > 0) {
 			n_migrations++;
 			printf("migrando %i diff %u\n", n_migrations, diff);
 
-			{ int i; printf("new map type %i: ", type); for (i=0; i<nthreads; i++) { printf("%i,", new_map[i]); } printf("\n"); }
+			{ int i; printf("new map type %i: ", type); for (i=0; i<nthreads; i++) { printf("%i,", tm->map[i]); } printf("\n"); }
 
 			for (i=0; i<nthreads; i++) { // migrate
-				mapping_lib_set_aff_of_thread(i, new_map[i]);
+				mapping_lib_set_aff_of_thread(i, tm->map[i]);
 			}
 
 			for (i=0; i<nthreads; i++)
-				current_map[i] = new_map[i];
+				current_map[i] = tm->map[i];
 		}
 	}
 #endif
