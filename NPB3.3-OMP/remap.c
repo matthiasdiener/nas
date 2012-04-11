@@ -33,6 +33,17 @@ static uint16_t nthreads;
 	static uint64_t **comm_matrix_threads;
 	
 	thread_mapping_t comm_matrix;
+
+	static void get_communication_matrix(uint64_t **comm_matrix)
+	{
+		int i, j;
+
+		for (i=0; i<ncores; i++) {
+			for (j=0; j<ncores; j++) {
+				comm_matrix[i][j] = mapping_lib_get_communication(nthreads, i, j);
+			}
+		}
+	}
 #endif
 
 //static thread_mapping_t map;
@@ -52,6 +63,9 @@ static void check_init()
 		#ifndef MPLIB_MAPPING_ALGORITHM_STATIC		
 			new_map = (uint32_t*)calloc(nthreads, sizeof(uint32_t));
 			assert(new_map != NULL);
+			
+			comm_matrix_cores = comm_matrix_malloc(nthreads);
+			comm_matrix_threads = comm_matrix_malloc(nthreads);
 		#endif
 		
 		mapping_lib_copy_initial_map(current_map);
@@ -74,7 +88,13 @@ static void check_init()
 //			return;
 		
 		#if defined(MAPPING_LIB_REAL_REMAP_SIMICS)
-			mapping_lib_get_communication(comm_matrix_cores, nthreads);
+			get_communication_matrix(comm_matrix_cores);
+			for (i=0; i<nthreads; i++) {
+				for (j=0; j<nthreads; j++) {
+					printf("comm %i-%i: %llu\n", comm_matrix_cores[i][j]);
+				}
+			}
+
 			mapping_lib_clear_communication();
 			
 			for (i=0; i<nthreads; i++) {
