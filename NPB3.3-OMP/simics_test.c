@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 	printf("\n");
 	for (i=0; i<ncores; i++) {
 		for (j=0; j<ncores; j++) {
-			printf("%llu  ", mapping_lib_get_communication(ncores, i, j));
+			printf("%llu  ", mapping_lib_get_communication(i, j));
 		}
 		printf("\n");
 	}

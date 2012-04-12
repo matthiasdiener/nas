@@ -1,9 +1,24 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <assert.h>
 
 #include <map_algorithm.h>
 #include <mapping-lib.h>
+
+#ifdef DEBUG
+	#undef DEBUG
+#endif
+
+#define DEBUG
+
+#define ENABLE_REMAP
+
+#ifdef DEBUG
+	#define DPRINTF(...) printf(__VA_ARGS__)
+#else
+	#define DPRINTF(...)
+#endif
 
 /*
 	types:
@@ -23,7 +38,7 @@ enum {
 static uint32_t *current_map;
 
 #ifndef MPLIB_MAPPING_ALGORITHM_STATIC
-	static uint32_t *new_map;
+	static uint32_t *new_map = NULL;
 #endif
 
 static uint16_t nthreads;
@@ -32,7 +47,7 @@ static uint16_t nthreads;
 	static uint64_t **comm_matrix_cores;
 	static uint64_t **comm_matrix_threads;
 	
-	thread_mapping_t comm_matrix;
+	thread_mapping_t tm_;
 
 	static void get_communication_matrix(uint64_t **comm_matrix)
 	{
@@ -40,7 +55,7 @@ static uint16_t nthreads;
 
 		for (i=0; i<ncores; i++) {
 			for (j=0; j<ncores; j++) {
-				comm_matrix[i][j] = mapping_lib_get_communication(nthreads, i, j);
+				comm_matrix[i][j] = mapping_lib_get_communication(i, j);
 			}
 		}
 	}
@@ -51,6 +66,8 @@ static uint16_t nthreads;
 static void check_init()
 {
 	static char init = 0;
+	int i, j;
+	
 	if (!init) {
 		init = 1;
 		assert(wrapper_dynmap_initialized());
@@ -60,12 +77,25 @@ static void check_init()
 		current_map = (uint32_t*)calloc(nthreads, sizeof(uint32_t));
 		assert(current_map != NULL);
 
-		#ifndef MPLIB_MAPPING_ALGORITHM_STATIC		
-			new_map = (uint32_t*)calloc(nthreads, sizeof(uint32_t));
-			assert(new_map != NULL);
-			
+		#if defined(MAPPING_LIB_REAL_REMAP_SIMICS)
 			comm_matrix_cores = comm_matrix_malloc(nthreads);
 			comm_matrix_threads = comm_matrix_malloc(nthreads);
+			tm_.comm_matrix = comm_matrix_malloc(nthreads);
+			
+			tm_.nthreads = nthreads;
+			
+			for (i=0; i<nthreads; i++) {
+				for (j=0; j<nthreads; j++) {
+					comm_matrix_cores[i][j] = 0;
+					comm_matrix_threads[i][j] = 0;
+					tm_.comm_matrix[i][j] = 0;
+				}
+			}		
+		#endif
+		
+		#if !defined(MPLIB_MAPPING_ALGORITHM_STATIC) && defined(ENABLE_REMAP)
+			new_map = (uint32_t*)calloc(nthreads, sizeof(uint32_t));
+			assert(new_map != NULL);
 		#endif
 		
 		mapping_lib_copy_initial_map(current_map);
@@ -83,33 +113,61 @@ static void check_init()
 	{
 		static uint32_t n_migrations = 0;
 		uint32_t diff, i, j;
+		#if defined(MAPPING_LIB_REAL_REMAP_SIMICS)
+			thread_mapping_t *tm = &tm_;
+		#endif
 
 //		if (type != 0)
 //			return;
 		
 		#if defined(MAPPING_LIB_REAL_REMAP_SIMICS)
 			get_communication_matrix(comm_matrix_cores);
-			for (i=0; i<nthreads; i++) {
-				for (j=0; j<nthreads; j++) {
-					printf("comm %i-%i: %llu\n", comm_matrix_cores[i][j]);
-				}
-			}
-
 			mapping_lib_clear_communication();
+
+			#ifdef DEBUG			
+				printf("\ncore matrix\n");
+				for (i=0; i<nthreads; i++) {
+					for (j=0; j<nthreads; j++) {
+						printf("%llu  ", comm_matrix_cores[i][j]);
+					}
+					printf("\n");
+				}
+			#endif
 			
 			for (i=0; i<nthreads; i++) {
 				for (j=0; j<nthreads; j++) {
 					comm_matrix_threads[i][j] += comm_matrix_cores[ wrapper_core_ids_pos(current_map[i]) ][ wrapper_core_ids_pos(current_map[j]) ];
 				}
 			}
+			
+			printf("\nthread matrix\n");
+			for (i=0; i<nthreads; i++) {
+				for (j=0; j<nthreads; j++) {
+					tm->comm_matrix[i][j] = comm_matrix_threads[i][j];
+				}
+			}
+
+			#ifdef DEBUG			
+				printf("\nfinal matrix\n");
+				for (i=0; i<nthreads; i++) {
+					for (j=0; j<nthreads; j++) {
+						printf("%llu  ", tm->comm_matrix[i][j]);
+					}
+					printf("\n");
+				}
+			#endif
 		#endif
 		
-		#ifndef MPLIB_MAPPING_ALGORITHM_STATIC
+		#if !defined(MPLIB_MAPPING_ALGORITHM_STATIC) && defined(ENABLE_REMAP)
 			tm->map = new_map;
 			wrapper_generate_thread_mapping(tm);
 		#endif
 		
-		diff = wrapper_generate_difference_between_mappings(current_map, tm->map, tm->nthreads);
+		#if defined(ENABLE_REMAP)
+			diff = wrapper_generate_difference_between_mappings(current_map, tm->map, tm->nthreads);
+		#else
+			diff = 0;
+		#endif
 //		{ int i; printf("new map type %i: ", type); for (i=0; i<nthreads; i++) { printf("%i,", tm->map[i]); } printf("\n diff %i\n\n", diff); } getchar();
 		if (diff > 0) {
 			n_migrations++;
