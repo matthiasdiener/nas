@@ -66,12 +66,16 @@ static uint16_t nthreads;
 
 //static thread_mapping_t map;
 
-static void check_init()
+static int check_init()
 {
 	static char init = 0;
 	int i, j;
 	
 	if (!init) {
+		if (mapping_lib_is_initializing()) {
+			return 0;
+		}
+
 		init = 1;
 		assert(wrapper_dynmap_initialized());
 		
@@ -106,6 +110,8 @@ static void check_init()
 		//{ int i; for (i=0; i<nthreads; i++) { current_map[i] = 0; } }
 		{ int i; printf("init with map: "); for (i=0; i<nthreads; i++) { printf("%i,", current_map[i]); } printf("\n"); }
 	}
+	
+	return 1;
 }
 
 #if defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
@@ -190,26 +196,26 @@ static void check_init()
 
 void remap_time_step(int step)
 {
-	check_init();
-	
-	//printf("xxx %d", step);
+	if (check_init()) {
+		//printf("xxx %d", step);
 
-	#if defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
-		mapping_lib_remap(0, step);
-	#elif defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
-		{
-			thread_mapping_t *tm;
+		#if defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
+			mapping_lib_remap(0, step);
+		#elif defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+			{
+				thread_mapping_t *tm;
 			
-			tm = wrapper_get_comm_pattern(TYPE_TIME_STEP, step);
-			assert(tm != NULL);
+				tm = wrapper_get_comm_pattern(TYPE_TIME_STEP, step);
+				assert(tm != NULL);
 			
-			remap_check_migrate(tm, TYPE_TIME_STEP);
+				remap_check_migrate(tm, TYPE_TIME_STEP);
 			
-			//{int i, j; printf("comm matrix(type %i value %i)\n", 0, step); for (i=0; i<tm->nthreads; i++) { for (j=0; j<tm->nthreads; j++) { printf("  %llu", tm->comm_matrix[i][j]); } printf("\n"); } printf("\n"); }
-		}
-	#elif defined(MAPPING_LIB_REAL_REMAP_SIMICS)
-		remap_check_migrate(TYPE_TIME_STEP);
-	#endif
+				//{int i, j; printf("comm matrix(type %i value %i)\n", 0, step); for (i=0; i<tm->nthreads; i++) { for (j=0; j<tm->nthreads; j++) { printf("  %llu", tm->comm_matrix[i][j]); } printf("\n"); } printf("\n"); }
+			}
+		#elif defined(MAPPING_LIB_REAL_REMAP_SIMICS)
+			remap_check_migrate(TYPE_TIME_STEP);
+		#endif
+	}
 }
 
 // fortran interface
@@ -222,25 +228,26 @@ void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
 {
 	static uint32_t n = 0;
 	
-	check_init();
-	
-	//printf("pstart %llu\n", n);
-	#if defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
-		mapping_lib_remap(1, n);
-	#elif defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
-		{
-			thread_mapping_t *tm;
+	if (check_init()) {
+		//printf("pstart %llu\n", n);
+		#if defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
+			mapping_lib_remap(1, n);
+		#elif defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+			{
+				thread_mapping_t *tm;
 			
-			tm = wrapper_get_comm_pattern(TYPE_PARALLEL_START, n);
-			assert(tm != NULL);
+				tm = wrapper_get_comm_pattern(TYPE_PARALLEL_START, n);
+				assert(tm != NULL);
 			
-			remap_check_migrate(tm, TYPE_PARALLEL_START);
-		}
-	#elif defined(MAPPING_LIB_REAL_REMAP_SIMICS)
-		remap_check_migrate(TYPE_PARALLEL_START);
-	#endif
+				remap_check_migrate(tm, TYPE_PARALLEL_START);
+			}
+		#elif defined(MAPPING_LIB_REAL_REMAP_SIMICS)
+			remap_check_migrate(TYPE_PARALLEL_START);
+		#endif
 
-	n++;
+		n++;
+	}
+	
 	return __real_GOMP_parallel_start(func, data, nt);
 }
 
@@ -248,54 +255,55 @@ void *__wrap_GOMP_parallel_end()
 {
 	static uint32_t n = 0;
 	
-	check_init();
-	
 	__real_GOMP_parallel_end();
-	//printf("pend %llu\n", n);
-	#if defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
-		mapping_lib_remap(2, n);
-	#elif defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
-		{
-			thread_mapping_t *tm;
+	
+	if (check_init()) {
+		//printf("pend %llu\n", n);
+		#if defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
+			mapping_lib_remap(2, n);
+		#elif defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+			{
+				thread_mapping_t *tm;
 			
-			tm = wrapper_get_comm_pattern(TYPE_PARALLEL_END, n);
-			assert(tm != NULL);
+				tm = wrapper_get_comm_pattern(TYPE_PARALLEL_END, n);
+				assert(tm != NULL);
 			
-			remap_check_migrate(tm, TYPE_PARALLEL_END);
-		}
-	#elif defined(MAPPING_LIB_REAL_REMAP_SIMICS)
-		remap_check_migrate(TYPE_PARALLEL_END);
-	#endif
+				remap_check_migrate(tm, TYPE_PARALLEL_END);
+			}
+		#elif defined(MAPPING_LIB_REAL_REMAP_SIMICS)
+			remap_check_migrate(TYPE_PARALLEL_END);
+		#endif
 		
-	n++;
+		n++;
+	}
 }
 
 void *__wrap_GOMP_barrier()
 {
 	static uint32_t n = 0;
 	
-	check_init();
-	
 	__real_GOMP_barrier();
 	#pragma omp master
 	{
-		//printf("pbarrier %llu\n", n);
-		#if defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
-			mapping_lib_remap(3, n);
-		#elif defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
-			{
-				thread_mapping_t *tm;
+		if (check_init()) {
+			//printf("pbarrier %llu\n", n);
+			#if defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
+				mapping_lib_remap(3, n);
+			#elif defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+				{
+					thread_mapping_t *tm;
 			
-				tm = wrapper_get_comm_pattern(TYPE_BARRIER, n);
-				assert(tm != NULL);
+					tm = wrapper_get_comm_pattern(TYPE_BARRIER, n);
+					assert(tm != NULL);
 			
-				remap_check_migrate(tm, TYPE_BARRIER);
-			}
-		#elif defined(MAPPING_LIB_REAL_REMAP_SIMICS)
-			remap_check_migrate(TYPE_BARRIER);
-		#endif
+					remap_check_migrate(tm, TYPE_BARRIER);
+				}
+			#elif defined(MAPPING_LIB_REAL_REMAP_SIMICS)
+				remap_check_migrate(TYPE_BARRIER);
+			#endif
 		
-		n++;
+			n++;
+		}
 	}
 }
 
