@@ -58,7 +58,7 @@ static uint16_t nthreads;
 
 		for (i=0; i<ncores; i++) {
 			for (j=0; j<ncores; j++) {
-				comm_matrix[i][j] = mapping_lib_get_communication(i, j);
+//				comm_matrix[i][j] = mapping_lib_get_communication(i, j);
 			}
 		}
 	}
@@ -126,7 +126,7 @@ static void check_init()
 		
 		#if defined(MAPPING_LIB_REAL_REMAP_SIMICS)
 			get_communication_matrix(comm_matrix_cores);
-			mapping_lib_clear_communication();
+//			mapping_lib_clear_communication();
 
 			#ifdef DEBUG			
 				printf("\ncore matrix\n");
