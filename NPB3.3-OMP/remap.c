@@ -12,7 +12,7 @@
 
 #define DEBUG
 
-#define ENABLE_REMAP
+//#define ENABLE_REMAP
 
 #ifdef DEBUG
 	#define DPRINTF(...) printf(__VA_ARGS__)
@@ -144,14 +144,13 @@ static void check_init()
 				}
 			}
 			
-			printf("\nthread matrix\n");
 			for (i=0; i<nthreads; i++) {
 				for (j=0; j<nthreads; j++) {
 					tm->comm_matrix[i][j] = comm_matrix_threads[i][j];
 				}
 			}
 
-			#ifdef DEBUG			
+			#ifdef DEBUG
 				printf("\nfinal matrix\n");
 				for (i=0; i<nthreads; i++) {
 					for (j=0; j<nthreads; j++) {
