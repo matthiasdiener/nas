@@ -58,7 +58,7 @@ static uint16_t nthreads;
 
 		for (i=0; i<ncores; i++) {
 			for (j=0; j<ncores; j++) {
-//				comm_matrix[i][j] = mapping_lib_get_communication(i, j);
+				comm_matrix[i][j] = mapping_lib_get_communication(i, j);
 			}
 		}
 	}
