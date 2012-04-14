@@ -59,7 +59,7 @@ bin/remap.o:
 	gcc -o bin/remap.o -c remap.c -O2 -fopenmp -DENABLE_OPENMP -I../../libmapping -DMAPPING_LIB_REAL_REMAP_SIMICS #-DMAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE #-DMAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
 
 bin/map_algorithm.o:
-	g++ -o bin/map_algorithm.o -c ../../libmapping/map_algorithm.cpp -O2 -fopenmp -g -DMAPPING_LIB_REAL_REMAP_SIMICS #-DMAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE
+	g++ -o bin/map_algorithm.o -c ../../libmapping/map_algorithm.cpp -O2 -fopenmp -DMAPPING_LIB_REAL_REMAP_SIMICS #-DMAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE
 
 simics_test:
 	gcc -o bin/simics_test simics_test.c -O2 -DENABLE_OPENMP -I../../libmapping -DMAPPING_LIB_REAL_REMAP_SIMICS
