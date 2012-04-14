@@ -127,8 +127,8 @@ static int check_init()
 			thread_mapping_t *tm = &tm_;
 		#endif
 
-//		if (type != 0)
-//			return;
+		if (type != TYPE_TIME_STEP)
+			return;
 		
 		#if defined(MAPPING_LIB_REAL_REMAP_SIMICS)
 			get_communication_matrix(comm_matrix_cores);
