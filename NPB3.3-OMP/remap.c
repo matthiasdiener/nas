@@ -126,7 +126,7 @@ static void check_init()
 		
 		#if defined(MAPPING_LIB_REAL_REMAP_SIMICS)
 			get_communication_matrix(comm_matrix_cores);
-//			mapping_lib_clear_communication();
+			mapping_lib_clear_communication();
 
 			#ifdef DEBUG			
 				printf("\ncore matrix\n");
