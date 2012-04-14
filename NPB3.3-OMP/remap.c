@@ -52,6 +52,9 @@ static uint16_t nthreads;
 	static void get_communication_matrix(uint64_t **comm_matrix)
 	{
 		int i, j;
+		int ncores;
+		
+		ncores = nthreads;
 
 		for (i=0; i<ncores; i++) {
 			for (j=0; j<ncores; j++) {
@@ -110,6 +113,7 @@ static void check_init()
 #elif defined(MAPPING_LIB_REAL_REMAP_SIMICS)
 	static void remap_check_migrate(int type)
 #endif
+#if defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE) || defined(MAPPING_LIB_REAL_REMAP_SIMICS)
 	{
 		static uint32_t n_migrations = 0;
 		uint32_t diff, i, j;
