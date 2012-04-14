@@ -21,6 +21,8 @@ int main(int argc, char **argv)
 		printf("\n");
 	}
 	printf("\n");
+
+	mapping_lib_clear_communication();
 	
 	return 0;
 }
