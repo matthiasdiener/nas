@@ -50,9 +50,15 @@ dc: header
 suite: mappinglib
 	@ awk -f sys/suite.awk SMAKE=$(MAKE) $(SFILE) | $(SHELL)
 
-mappinglib:
+mappinglib: bin/mapping-lib.o bin/remap.o bin/map_algorithm.o
+
+bin/mapping-lib.o:
 	gcc -o bin/mapping-lib.o -c ../../libmapping/fortran-c-interface.c -O2 -fopenmp -DENABLE_OPENMP -DMAPPING_LIB_REAL_REMAP_SIMICS #-DMAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE #-DMAPPING_LIB_WITH_PAPI #-DMAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
+
+bin/remap.o:
 	gcc -o bin/remap.o -c remap.c -O2 -fopenmp -DENABLE_OPENMP -I../../libmapping -DMAPPING_LIB_REAL_REMAP_SIMICS #-DMAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE #-DMAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
+
+bin/map_algorithm.o:
 	g++ -o bin/map_algorithm.o -c ../../libmapping/map_algorithm.cpp -O2 -fopenmp -g -DMAPPING_LIB_REAL_REMAP_SIMICS #-DMAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE
 
 simics_test:
