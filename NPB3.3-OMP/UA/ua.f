@@ -55,7 +55,7 @@ c---------------------------------------------------------------------
       double precision t2, trecs(t_last)
       character t_names(t_last)*10
 
-      call mapping_lib_fortran_c_interface_omp_automate()
+      call libmapping_omp_automate()
 c---------------------------------------------------------------------
 c     Read input file (if it exists), else take
 c     defaults from parameters

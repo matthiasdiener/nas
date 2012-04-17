@@ -53,16 +53,16 @@ suite: mappinglib
 mappinglib: bin/mapping-lib.o bin/remap.o bin/map_algorithm.o
 
 bin/mapping-lib.o:
-	gcc -o bin/mapping-lib.o -c ../../libmapping/fortran-c-interface.c -O2 -fopenmp -DENABLE_OPENMP -DMAPPING_LIB_REAL_REMAP_SIMICS #-DMAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE #-DMAPPING_LIB_WITH_PAPI #-DMAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
+	gcc -o bin/mapping-lib.o -c ../../libmapping/fortran-c-interface.c -O2 -fopenmp -DENABLE_OPENMP  -DLIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE #-DLIBMAPPING_WITH_PAPI #-DLIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE #-DLIBMAPPING_REAL_REMAP_SIMICS
 
 bin/remap.o:
-	gcc -o bin/remap.o -c remap.c -O2 -fopenmp -DENABLE_OPENMP -I../../libmapping -DMAPPING_LIB_REAL_REMAP_SIMICS #-DMAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE #-DMAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE
+	gcc -o bin/remap.o -c remap.c -O2 -fopenmp -DENABLE_OPENMP -I../../libmapping  -DLIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE #-DLIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE #-DLIBMAPPING_REAL_REMAP_SIMICS
 
 bin/map_algorithm.o:
-	g++ -o bin/map_algorithm.o -c ../../libmapping/map_algorithm.cpp -O2 -fopenmp -DMAPPING_LIB_REAL_REMAP_SIMICS #-DMAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE
+	g++ -o bin/map_algorithm.o -c ../../libmapping/map_algorithm.cpp -O2 -fopenmp  -DLIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE #-DLIBMAPPING_REAL_REMAP_SIMICS
 
 simics_test:
-	gcc -o bin/simics_test simics_test.c -O2 -DENABLE_OPENMP -I../../libmapping -DMAPPING_LIB_REAL_REMAP_SIMICS
+	gcc -o bin/simics_test simics_test.c -O2 -DENABLE_OPENMP -I../../libmapping #-DLIBMAPPING_REAL_REMAP_SIMICS
 
 # It would be nice to make clean in each subdirectory (the targets
 # are defined) but on a really clean system this will won't work

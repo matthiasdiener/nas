@@ -4,7 +4,7 @@
 #include <assert.h>
 
 #include <map_algorithm.h>
-#include <mapping-lib.h>
+#include <libmapping.h>
 
 #ifdef DEBUG
 	#undef DEBUG
@@ -43,7 +43,7 @@ static uint32_t *current_map;
 
 static uint16_t nthreads;
 
-#if defined(MAPPING_LIB_REAL_REMAP_SIMICS)
+#if defined(LIBMAPPING_REAL_REMAP_SIMICS)
 	static uint64_t **comm_matrix_cores;
 	static uint64_t **comm_matrix_threads;
 	
@@ -58,7 +58,7 @@ static uint16_t nthreads;
 
 		for (i=0; i<ncores; i++) {
 			for (j=0; j<ncores; j++) {
-				comm_matrix[i][j] = mapping_lib_get_communication(i, j);
+				comm_matrix[i][j] = libmapping_get_communication(i, j);
 			}
 		}
 	}
@@ -72,7 +72,7 @@ static int check_init()
 	int i, j;
 	
 	if (!init) {
-		if (mapping_lib_is_initializing()) {
+		if (libmapping_is_initializing()) {
 			return 0;
 		}
 
@@ -84,7 +84,7 @@ static int check_init()
 		current_map = (uint32_t*)calloc(nthreads, sizeof(uint32_t));
 		assert(current_map != NULL);
 
-		#if defined(MAPPING_LIB_REAL_REMAP_SIMICS)
+		#if defined(LIBMAPPING_REAL_REMAP_SIMICS)
 			comm_matrix_cores = comm_matrix_malloc(nthreads);
 			comm_matrix_threads = comm_matrix_malloc(nthreads);
 			tm_.comm_matrix = comm_matrix_malloc(nthreads);
@@ -105,7 +105,7 @@ static int check_init()
 			assert(new_map != NULL);
 		#endif
 		
-		mapping_lib_copy_initial_map(current_map);
+		libmapping_copy_initial_map(current_map);
 
 		//{ int i; for (i=0; i<nthreads; i++) { current_map[i] = 0; } }
 		{ int i; printf("init with map: "); for (i=0; i<nthreads; i++) { printf("%i,", current_map[i]); } printf("\n"); }
@@ -114,25 +114,25 @@ static int check_init()
 	return 1;
 }
 
-#if defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 	static void remap_check_migrate(thread_mapping_t *tm, int type)
-#elif defined(MAPPING_LIB_REAL_REMAP_SIMICS)
+#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
 	static void remap_check_migrate(int type)
 #endif
-#if defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE) || defined(MAPPING_LIB_REAL_REMAP_SIMICS)
+#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE) || defined(LIBMAPPING_REAL_REMAP_SIMICS)
 	{
 		static uint32_t n_migrations = 0;
 		uint32_t diff, i, j;
-		#if defined(MAPPING_LIB_REAL_REMAP_SIMICS)
+		#if defined(LIBMAPPING_REAL_REMAP_SIMICS)
 			thread_mapping_t *tm = &tm_;
 		#endif
 
 		if (type != TYPE_TIME_STEP)
 			return;
 		
-		#if defined(MAPPING_LIB_REAL_REMAP_SIMICS)
+		#if defined(LIBMAPPING_REAL_REMAP_SIMICS)
 			get_communication_matrix(comm_matrix_cores);
-			mapping_lib_clear_communication();
+			libmapping_clear_communication();
 
 			#ifdef DEBUG			
 				printf("\ncore matrix\n");
@@ -185,7 +185,7 @@ static int check_init()
 			{ int i; printf("new map type %i: ", type); for (i=0; i<nthreads; i++) { printf("%i,", tm->map[i]); } printf("\n"); }
 
 			for (i=0; i<nthreads; i++) { // migrate
-				mapping_lib_set_aff_of_thread(i, tm->map[i]);
+				libmapping_set_aff_of_thread(i, tm->map[i]);
 			}
 
 			for (i=0; i<nthreads; i++)
@@ -199,9 +199,9 @@ void remap_time_step(int step)
 	if (check_init()) {
 		//printf("xxx %d", step);
 
-		#if defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
-			mapping_lib_remap(0, step);
-		#elif defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
+			libmapping_remap(0, step);
+		#elif defined(MAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 			{
 				thread_mapping_t *tm;
 			
@@ -212,7 +212,7 @@ void remap_time_step(int step)
 			
 				//{int i, j; printf("comm matrix(type %i value %i)\n", 0, step); for (i=0; i<tm->nthreads; i++) { for (j=0; j<tm->nthreads; j++) { printf("  %llu", tm->comm_matrix[i][j]); } printf("\n"); } printf("\n"); }
 			}
-		#elif defined(MAPPING_LIB_REAL_REMAP_SIMICS)
+		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
 			remap_check_migrate(TYPE_TIME_STEP);
 		#endif
 	}
@@ -230,9 +230,9 @@ void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
 	
 	if (check_init()) {
 		//printf("pstart %llu\n", n);
-		#if defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
-			mapping_lib_remap(1, n);
-		#elif defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
+			libmapping_remap(1, n);
+		#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 			{
 				thread_mapping_t *tm;
 			
@@ -241,7 +241,7 @@ void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
 			
 				remap_check_migrate(tm, TYPE_PARALLEL_START);
 			}
-		#elif defined(MAPPING_LIB_REAL_REMAP_SIMICS)
+		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
 			remap_check_migrate(TYPE_PARALLEL_START);
 		#endif
 
@@ -259,9 +259,9 @@ void *__wrap_GOMP_parallel_end()
 	
 	if (check_init()) {
 		//printf("pend %llu\n", n);
-		#if defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
-			mapping_lib_remap(2, n);
-		#elif defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
+			libmapping_remap(2, n);
+		#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 			{
 				thread_mapping_t *tm;
 			
@@ -270,7 +270,7 @@ void *__wrap_GOMP_parallel_end()
 			
 				remap_check_migrate(tm, TYPE_PARALLEL_END);
 			}
-		#elif defined(MAPPING_LIB_REAL_REMAP_SIMICS)
+		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
 			remap_check_migrate(TYPE_PARALLEL_END);
 		#endif
 		
@@ -287,9 +287,9 @@ void *__wrap_GOMP_barrier()
 	{
 		if (check_init()) {
 			//printf("pbarrier %llu\n", n);
-			#if defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
-				mapping_lib_remap(3, n);
-			#elif defined(MAPPING_LIB_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+			#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
+				libmapping_remap(3, n);
+			#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 				{
 					thread_mapping_t *tm;
 			
@@ -298,7 +298,7 @@ void *__wrap_GOMP_barrier()
 			
 					remap_check_migrate(tm, TYPE_BARRIER);
 				}
-			#elif defined(MAPPING_LIB_REAL_REMAP_SIMICS)
+			#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
 				remap_check_migrate(TYPE_BARRIER);
 			#endif
 		
