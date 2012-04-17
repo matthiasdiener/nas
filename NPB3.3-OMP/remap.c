@@ -201,7 +201,7 @@ void remap_time_step(int step)
 
 		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
 			libmapping_remap(0, step);
-		#elif defined(MAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+		#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 			{
 				thread_mapping_t *tm;
 			
@@ -214,6 +214,8 @@ void remap_time_step(int step)
 			}
 		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
 			remap_check_migrate(TYPE_TIME_STEP);
+		#else
+			#error missed define
 		#endif
 	}
 }
@@ -243,6 +245,8 @@ void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
 			}
 		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
 			remap_check_migrate(TYPE_PARALLEL_START);
+		#else
+			#error missed define
 		#endif
 
 		n++;
@@ -272,6 +276,8 @@ void *__wrap_GOMP_parallel_end()
 			}
 		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
 			remap_check_migrate(TYPE_PARALLEL_END);
+		#else
+			#error missed define
 		#endif
 		
 		n++;
@@ -300,6 +306,8 @@ void *__wrap_GOMP_barrier()
 				}
 			#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
 				remap_check_migrate(TYPE_BARRIER);
+			#else
+				#error missed define
 			#endif
 		
 			n++;
