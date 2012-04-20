@@ -28,7 +28,7 @@ c$    num_threads = omp_get_num_threads()
 c$omp end master
 c$omp end parallel
 
-         call libmapping_automate_finish()
+         call libmapping_omp_automate_finish()
 
          write (*, 2) name
  2       format(//, ' ', A, ' Benchmark Completed.')
