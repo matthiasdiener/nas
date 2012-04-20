@@ -51,7 +51,7 @@ suite: mappinglib
 	@ awk -f sys/suite.awk SMAKE=$(MAKE) $(SFILE) | $(SHELL)
 
 mappinglib:
-	gcc -o bin/mapping-lib.o -c ../../libmapping/fortran-c-interface.c -O2 -fopenmp -DENABLE_OPENMP #-DMAPPING_LIB_WITH_PAPI
+	gcc -o bin/libmapping.o -c ../../libmapping/libmapping.c -O2 -fopenmp -DENABLE_OPENMP #-DMAPPING_LIB_WITH_PAPI
 
 # It would be nice to make clean in each subdirectory (the targets
 # are defined) but on a really clean system this will won't work

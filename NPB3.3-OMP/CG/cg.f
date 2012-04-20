@@ -95,7 +95,7 @@ c---------------------------------------------------------------------
 !$    integer   omp_get_max_threads
 !$    external  omp_get_max_threads
 
-      call mapping_lib_fortran_c_interface_omp_automate()
+      call libmapping_omp_automate()
 
       do i = 1, T_last
          call timer_clear( i )

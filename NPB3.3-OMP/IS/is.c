@@ -46,7 +46,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <mapping-lib.h>
+#include <libmapping.h>
 
 /*****************************************************************/
 /* For serial IS, buckets are not really req'd to solve NPB1 IS  */
@@ -901,7 +901,7 @@ int main( int argc, char **argv )
 
     FILE            *fp;
 
-	mapping_lib_omp_automate(0);
+	libmapping_omp_automate();
 
 /*  Initialize timers  */
     timer_on = 0;            
