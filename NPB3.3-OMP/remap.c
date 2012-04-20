@@ -10,9 +10,9 @@
 	#undef DEBUG
 #endif
 
-#define DEBUG
+//#define DEBUG
 
-//#define ENABLE_REMAP
+#define ENABLE_REMAP
 
 #ifdef DEBUG
 	#define DPRINTF(...) printf(__VA_ARGS__)
