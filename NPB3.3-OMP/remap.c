@@ -47,7 +47,7 @@ static uint16_t nthreads;
 	static uint64_t **comm_matrix_cores;
 	static uint64_t **comm_matrix_threads;
 	
-	thread_mapping_t tm_;
+	static thread_mapping_t tm_;
 
 	static void get_communication_matrix(uint64_t **comm_matrix)
 	{
@@ -62,6 +62,10 @@ static uint16_t nthreads;
 			}
 		}
 	}
+#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+	static uint64_t **comm_matrix_ac;
+	static uint64_t **comm_matrix_ac_diff;
+	static thread_mapping_t tm_;
 #endif
 
 //static thread_mapping_t map;
@@ -98,6 +102,20 @@ static int check_init()
 					tm_.comm_matrix[i][j] = 0;
 				}
 			}		
+		#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+			comm_matrix_ac = comm_matrix_malloc(nthreads);
+			comm_matrix_ac_diff = comm_matrix_malloc(nthreads);
+			tm_.comm_matrix = comm_matrix_malloc(nthreads);
+			
+			tm_.nthreads = nthreads;
+			
+			for (i=0; i<nthreads; i++) {
+				for (j=0; j<nthreads; j++) {
+					comm_matrix_ac[i][j] = 0;
+					comm_matrix_ac_diff[i][j] = 0;
+					tm_.comm_matrix[i][j] = 0;
+				}
+			}
 		#endif
 		
 		#if !defined(MPLIB_MAPPING_ALGORITHM_STATIC) && defined(ENABLE_REMAP)
@@ -115,7 +133,7 @@ static int check_init()
 }
 
 #if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
-	static void remap_check_migrate(thread_mapping_t *tm, int type)
+	static void remap_check_migrate(thread_mapping_t *tm_static, int type)
 #elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
 	static void remap_check_migrate(int type)
 #endif
@@ -123,12 +141,10 @@ static int check_init()
 	{
 		static uint32_t n_migrations = 0;
 		uint32_t diff, i, j;
-		#if defined(LIBMAPPING_REAL_REMAP_SIMICS)
-			thread_mapping_t *tm = &tm_;
-		#endif
+		thread_mapping_t *tm = &tm_;
 
-		if (type != TYPE_TIME_STEP)
-			return;
+//		if (type != TYPE_TIME_STEP)
+//			return;
 		
 		#if defined(LIBMAPPING_REAL_REMAP_SIMICS)
 			get_communication_matrix(comm_matrix_cores);
@@ -165,11 +181,33 @@ static int check_init()
 					printf("\n");
 				}
 			#endif
+		#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+			for (i=0; i<nthreads; i++) {
+				for (j=0; j<nthreads; j++) {
+					comm_matrix_ac_diff[i][j] = tm_static->comm_matrix[i][j] - comm_matrix_ac[i][j];
+				}
+			}
+			
+			for (i=0; i<nthreads; i++) {
+				for (j=0; j<nthreads; j++) {
+					comm_matrix_ac[i][j] = tm_static->comm_matrix[i][j];
+				}
+			}
+			
+			for (i=0; i<nthreads; i++) {
+				for (j=0; j<nthreads; j++) {
+					tm->comm_matrix[i][j] = comm_matrix_ac[i][j];
+				}
+			}
 		#endif
-		
+			
 		#if !defined(MPLIB_MAPPING_ALGORITHM_STATIC) && defined(ENABLE_REMAP)
 			tm->map = new_map;
 			wrapper_generate_thread_mapping(tm);
+		#endif
+		
+		#if defined(MPLIB_MAPPING_ALGORITHM_STATIC)
+			tm = tm_static;
 		#endif
 		
 		#if defined(ENABLE_REMAP)
