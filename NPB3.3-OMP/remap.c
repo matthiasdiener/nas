@@ -196,7 +196,7 @@ static int check_init()
 			
 			for (i=0; i<nthreads; i++) {
 				for (j=0; j<nthreads; j++) {
-					tm->comm_matrix[i][j] = comm_matrix_ac[i][j];
+					tm->comm_matrix[i][j] = (tm->comm_matrix[i][j] >> 1) + comm_matrix_ac_diff[i][j];
 				}
 			}
 		#endif
