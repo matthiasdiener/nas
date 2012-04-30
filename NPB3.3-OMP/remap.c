@@ -43,6 +43,10 @@ static uint32_t *current_map;
 
 static uint16_t nthreads;
 
+	static uint64_t **comm_matrix_current_normalized;
+	static uint64_t **comm_matrix_old;
+	static uint64_t **comm_matrix_old_normalized;
+
 #if defined(LIBMAPPING_REAL_REMAP_SIMICS)
 	static uint64_t **comm_matrix_cores;
 	static uint64_t **comm_matrix_threads;
@@ -70,6 +74,54 @@ static uint16_t nthreads;
 
 //static thread_mapping_t map;
 
+static void print_matrix(uint64_t **m)
+{
+	int i, j;
+	for (i=0; i<nthreads; i++) {
+		for (j=0; j<nthreads; j++) {
+			printf("%llu  ", m[i][j]);
+		}
+		printf("\n");
+	}
+}
+
+uint64_t root_mean_square(uint64_t **m1, uint64_t **m2)
+{
+	int i, j;
+	uint64_t r = 0;
+	int64_t d;
+	for (i=0; i<nthreads; i++) {
+		for (j=i+1; j<nthreads; j++) {
+			d = (int64_t)m1[i][j] - (int64_t)m2[i][j];
+			//r += d*d;
+			r += (d > 0) ? d : -d;
+		}
+	}
+	return r; // / nthreads;
+}
+
+void normalize_matrix(uint64_t **dst, uint64_t **src)
+{
+	int i, j;
+	uint64_t max = 0;
+
+	for (i=0; i<nthreads; i++) {
+		for (j=0; j<nthreads; j++) {
+			if (src[i][j] > max)
+				max = src[i][j];
+		}
+	}
+	
+	if (max == 0)
+		max = 1;
+	
+	for (i=0; i<nthreads; i++) {
+		for (j=0; j<nthreads; j++) {
+				dst[i][j] = (src[i][j]*100) / max;
+		}
+	}
+}
+
 static int check_init()
 {
 	static char init = 0;
@@ -88,6 +140,18 @@ static int check_init()
 		current_map = (uint32_t*)calloc(nthreads, sizeof(uint32_t));
 		assert(current_map != NULL);
 
+		comm_matrix_current_normalized = comm_matrix_malloc(nthreads);
+		comm_matrix_old = comm_matrix_malloc(nthreads);
+		comm_matrix_old_normalized = comm_matrix_malloc(nthreads);
+		
+		for (i=0; i<nthreads; i++) {
+			for (j=0; j<nthreads; j++) {
+				comm_matrix_old[i][j] = 0;
+			}
+		}
+		
+		normalize_matrix(comm_matrix_old_normalized, comm_matrix_old);
+
 		#if defined(LIBMAPPING_REAL_REMAP_SIMICS)
 			comm_matrix_cores = comm_matrix_malloc(nthreads);
 			comm_matrix_threads = comm_matrix_malloc(nthreads);
@@ -101,7 +165,7 @@ static int check_init()
 					comm_matrix_threads[i][j] = 0;
 					tm_.comm_matrix[i][j] = 0;
 				}
-			}		
+			}
 		#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 			comm_matrix_ac = comm_matrix_malloc(nthreads);
 			comm_matrix_ac_diff = comm_matrix_malloc(nthreads);
@@ -142,9 +206,10 @@ static int check_init()
 		static uint32_t n_migrations = 0;
 		uint32_t diff, i, j;
 		thread_mapping_t *tm = &tm_;
+		uint64_t rms;
 
-//		if (type != TYPE_TIME_STEP)
-//			return;
+		if (type != TYPE_BARRIER)
+			return;
 		
 		#if defined(LIBMAPPING_REAL_REMAP_SIMICS)
 			get_communication_matrix(comm_matrix_cores);
@@ -183,10 +248,16 @@ static int check_init()
 			#endif
 		#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 			for (i=0; i<nthreads; i++) {
+				tm_static->comm_matrix[i][i] = 0;
+			}
+			
+			for (i=0; i<nthreads; i++) {
 				for (j=0; j<nthreads; j++) {
 					comm_matrix_ac_diff[i][j] = tm_static->comm_matrix[i][j] - comm_matrix_ac[i][j];
 				}
 			}
+			
+//			print_matrix(comm_matrix_ac_diff);
 			
 			for (i=0; i<nthreads; i++) {
 				for (j=0; j<nthreads; j++) {
@@ -209,6 +280,15 @@ static int check_init()
 		#if defined(MPLIB_MAPPING_ALGORITHM_STATIC)
 			tm = tm_static;
 		#endif
+
+printf("--------------------------------------------\n");	
+		normalize_matrix(comm_matrix_current_normalized, tm->comm_matrix);
+//		print_matrix(tm->comm_matrix);
+		print_matrix(comm_matrix_current_normalized);
+		printf("--\n");
+		print_matrix(comm_matrix_old_normalized);
+		rms = root_mean_square(comm_matrix_current_normalized, comm_matrix_old_normalized);
+		printf("rms is %llu\n", rms);
 		
 		#if defined(ENABLE_REMAP)
 			diff = wrapper_generate_difference_between_mappings(current_map, tm->map, tm->nthreads);
@@ -228,6 +308,14 @@ static int check_init()
 
 			for (i=0; i<nthreads; i++)
 				current_map[i] = tm->map[i];
+				
+			for (i=0; i<nthreads; i++) {
+				for (j=0; j<nthreads; j++) {
+					comm_matrix_old[i][j] = tm->comm_matrix[i][j];
+				}
+			}
+			
+			normalize_matrix(comm_matrix_old_normalized, comm_matrix_old);
 		}
 	}
 #endif
