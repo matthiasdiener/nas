@@ -32,7 +32,7 @@ FLINK	= $(F77)
 #---------------------------------------------------------------------------
 # These macros are passed to the linker 
 #---------------------------------------------------------------------------
-F_LIB  = ../bin/mapping-lib.o ../bin/remap.o ../bin/map_algorithm.o -lemon -lstdc++
+F_LIB  = ../bin/mapping-lib.o ../bin/remap.o ../bin/map_algorithm.o ../bin/libremap.o -lemon -lstdc++
 #---------------------------------------------------------------------------
 # These macros are passed to the compiler 
 #---------------------------------------------------------------------------
@@ -77,7 +77,7 @@ CLINK	= $(CC)
 #---------------------------------------------------------------------------
 # These macros are passed to the linker 
 #---------------------------------------------------------------------------
-C_LIB  = -lm ../bin/mapping-lib.o ../bin/remap.o ../bin/map_algorithm.o -lemon -lstdc++
+C_LIB  = -lm ../bin/mapping-lib.o ../bin/remap.o ../bin/map_algorithm.o ../bin/libremap.o -lemon -lstdc++
 
 #---------------------------------------------------------------------------
 # These macros are passed to the compiler 

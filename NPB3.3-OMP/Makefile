@@ -54,7 +54,10 @@ dc: header
 suite: mappinglib
 	@ awk -f sys/suite.awk SMAKE=$(MAKE) $(SFILE) | $(SHELL)
 
-mappinglib: bin/mapping-lib.o bin/remap.o bin/map_algorithm.o
+mappinglib: bin/mapping-lib.o bin/remap.o bin/map_algorithm.o bin/libremap.o
+
+bin/libremap.o:
+	gcc -o bin/libremap.o -c ../../libmapping/libremap.c -O2 -fopenmp -DENABLE_OPENMP $(MAPFLAGS)
 
 bin/mapping-lib.o:
 	gcc -o bin/mapping-lib.o -c ../../libmapping/libmapping.c -O2 -fopenmp -DENABLE_OPENMP $(MAPFLAGS)
