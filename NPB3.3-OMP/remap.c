@@ -57,7 +57,7 @@ enum {
 
 void remap_time_step(int step)
 {
-	if (libmapping_remap_check_init()) {
+	if (libmapping_is_initialized()) {
 		//printf("xxx %d", step);
 
 		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
@@ -91,7 +91,7 @@ void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
 {
 	static uint32_t n = 0;
 	
-	if (libmapping_remap_check_init()) {
+	if (libmapping_is_initialized()) {
 		//printf("pstart %llu\n", n);
 		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
 			libmapping_remap(1, n);
@@ -122,7 +122,7 @@ void *__wrap_GOMP_parallel_end()
 	
 	__real_GOMP_parallel_end();
 	
-	if (libmapping_remap_check_init()) {
+	if (libmapping_is_initialized()) {
 		//printf("pend %llu\n", n);
 		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
 			libmapping_remap(2, n);
@@ -152,7 +152,7 @@ void *__wrap_GOMP_barrier()
 	__real_GOMP_barrier();
 	#pragma omp master
 	{
-		if (libmapping_remap_check_init()) {
+		if (libmapping_is_initialized()) {
 			//printf("pbarrier %llu\n", n);
 			#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
 				libmapping_remap(3, n);
