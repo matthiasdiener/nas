@@ -67,9 +67,10 @@ void remap_time_step(int step)
 				thread_mapping_t *tm;
 			
 				tm = wrapper_get_comm_pattern(TYPE_TIME_STEP, step);
-				assert(tm != NULL);
+//				assert(tm != NULL);
 			
-				remap_check_migrate(tm, TYPE_TIME_STEP);
+				if (tm != NULL)
+					remap_check_migrate(tm, TYPE_TIME_STEP);
 			
 				//{int i, j; printf("comm matrix(type %i value %i)\n", 0, step); for (i=0; i<tm->nthreads; i++) { for (j=0; j<tm->nthreads; j++) { printf("  %llu", tm->comm_matrix[i][j]); } printf("\n"); } printf("\n"); }
 			}
@@ -100,9 +101,10 @@ void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
 				thread_mapping_t *tm;
 			
 				tm = wrapper_get_comm_pattern(TYPE_PARALLEL_START, n);
-				assert(tm != NULL);
+//				assert(tm != NULL);
 			
-				remap_check_migrate(tm, TYPE_PARALLEL_START);
+				if (tm != NULL)
+					remap_check_migrate(tm, TYPE_PARALLEL_START);
 			}
 		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
 			remap_check_migrate(TYPE_PARALLEL_START);
@@ -131,9 +133,10 @@ void *__wrap_GOMP_parallel_end()
 				thread_mapping_t *tm;
 			
 				tm = wrapper_get_comm_pattern(TYPE_PARALLEL_END, n);
-				assert(tm != NULL);
+	//			assert(tm != NULL);
 			
-				remap_check_migrate(tm, TYPE_PARALLEL_END);
+				if (tm != NULL)
+					remap_check_migrate(tm, TYPE_PARALLEL_END);
 			}
 		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
 			remap_check_migrate(TYPE_PARALLEL_END);
@@ -161,9 +164,10 @@ void *__wrap_GOMP_barrier()
 					thread_mapping_t *tm;
 			
 					tm = wrapper_get_comm_pattern(TYPE_BARRIER, n);
-					assert(tm != NULL);
+//					assert(tm != NULL);
 			
-					remap_check_migrate(tm, TYPE_BARRIER);
+					if (tm != NULL)
+						remap_check_migrate(tm, TYPE_BARRIER);
 				}
 			#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
 				remap_check_migrate(TYPE_BARRIER);
