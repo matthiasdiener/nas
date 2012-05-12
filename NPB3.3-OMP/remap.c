@@ -64,13 +64,14 @@ void remap_time_step(int step)
 			libmapping_remap(0, step);
 		#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 			{
-				thread_mapping_t *tm;
+				thread_mapping_t tm;
+				int r;
 			
-				tm = wrapper_get_comm_pattern(TYPE_TIME_STEP, step);
+				r = wrapper_get_comm_pattern(TYPE_TIME_STEP, step, &tm);
 //				assert(tm != NULL);
 			
-				if (tm != NULL)
-					remap_check_migrate(tm, TYPE_TIME_STEP);
+				if (r)
+					remap_check_migrate(&tm, TYPE_TIME_STEP);
 			
 				//{int i, j; printf("comm matrix(type %i value %i)\n", 0, step); for (i=0; i<tm->nthreads; i++) { for (j=0; j<tm->nthreads; j++) { printf("  %llu", tm->comm_matrix[i][j]); } printf("\n"); } printf("\n"); }
 			}
@@ -98,13 +99,14 @@ void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
 			libmapping_remap(1, n);
 		#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 			{
-				thread_mapping_t *tm;
+				thread_mapping_t tm;
+				int r;
 			
-				tm = wrapper_get_comm_pattern(TYPE_PARALLEL_START, n);
+				r = wrapper_get_comm_pattern(TYPE_PARALLEL_START, n, &tm);
 //				assert(tm != NULL);
 			
-				if (tm != NULL)
-					remap_check_migrate(tm, TYPE_PARALLEL_START);
+				if (r)
+					remap_check_migrate(&tm, TYPE_PARALLEL_START);
 			}
 		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
 			remap_check_migrate(TYPE_PARALLEL_START);
@@ -130,13 +132,14 @@ void *__wrap_GOMP_parallel_end()
 			libmapping_remap(2, n);
 		#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 			{
-				thread_mapping_t *tm;
+				thread_mapping_t tm;
+				int r;
 			
-				tm = wrapper_get_comm_pattern(TYPE_PARALLEL_END, n);
+				r = wrapper_get_comm_pattern(TYPE_PARALLEL_END, n, &tm);
 	//			assert(tm != NULL);
 			
-				if (tm != NULL)
-					remap_check_migrate(tm, TYPE_PARALLEL_END);
+				if (r)
+					remap_check_migrate(&tm, TYPE_PARALLEL_END);
 			}
 		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
 			remap_check_migrate(TYPE_PARALLEL_END);
@@ -161,13 +164,14 @@ void *__wrap_GOMP_barrier()
 				libmapping_remap(3, n);
 			#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 				{
-					thread_mapping_t *tm;
+					thread_mapping_t tm;
+					int r;
 			
-					tm = wrapper_get_comm_pattern(TYPE_BARRIER, n);
+					r = wrapper_get_comm_pattern(TYPE_BARRIER, n, &tm);
 //					assert(tm != NULL);
 			
-					if (tm != NULL)
-						remap_check_migrate(tm, TYPE_BARRIER);
+					if (r)
+						remap_check_migrate(&tm, TYPE_BARRIER);
 				}
 			#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
 				remap_check_migrate(TYPE_BARRIER);
