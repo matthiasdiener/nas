@@ -44,14 +44,19 @@ enum {
 #endif
 #if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE) || defined(LIBMAPPING_REAL_REMAP_SIMICS)
 	{
+		int code;
+		
 		if (type != TYPE_BARRIER)
 			return;
 		
 		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
-			libmapping_remap_check_migrate(tm_static);
+			code = libmapping_remap_check_migrate(tm_static);
 		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
-			libmapping_remap_check_migrate();
+			code = libmapping_remap_check_migrate();
 		#endif
+		
+		if (code == LIBMAPPING_REMAP_MIGRATED)
+			DPRINTF(">>> MIGRATED\n");
 	}
 #endif
 
