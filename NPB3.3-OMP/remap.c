@@ -45,8 +45,13 @@ enum {
 #if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE) || defined(LIBMAPPING_REAL_REMAP_SIMICS)
 	{
 		int code;
+		static int has_barrier = 0;
 		
-		if (type != TYPE_BARRIER)
+		if (type == TYPE_BARRIER)
+			has_barrier = 1;
+		else if (type == TYPE_PARALLEL_START && has_barrier == 0)
+			;
+		else
 			return;
 		
 		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
