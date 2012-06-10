@@ -71,7 +71,7 @@ void remap_time_step(int step)
 		//printf("xxx %d", step);
 
 		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
-			libmapping_remap(0, step);
+			libmapping_remap(TYPE_TIME_STEP, step);
 		#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 			{
 				thread_mapping_t *tm;
@@ -105,7 +105,7 @@ void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
 	if (libmapping_is_initialized()) {
 		//printf("pstart %llu\n", n);
 		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
-			libmapping_remap(1, n);
+			libmapping_remap(TYPE_PARALLEL_START, n);
 		#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 			{
 				thread_mapping_t *tm;
@@ -137,7 +137,7 @@ void *__wrap_GOMP_parallel_end()
 	if (libmapping_is_initialized()) {
 		//printf("pend %llu\n", n);
 		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
-			libmapping_remap(2, n);
+			libmapping_remap(TYPE_PARALLEL_END, n);
 		#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 			{
 				thread_mapping_t *tm;
@@ -168,7 +168,7 @@ void *__wrap_GOMP_barrier()
 		if (libmapping_is_initialized()) {
 			//printf("pbarrier %llu\n", n);
 			#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
-				libmapping_remap(3, n);
+				libmapping_remap(TYPE_BARRIER, n);
 			#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 				{
 					thread_mapping_t *tm;
