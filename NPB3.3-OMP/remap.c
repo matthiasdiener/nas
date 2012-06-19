@@ -37,6 +37,8 @@ enum {
 	TYPE_BARRIER = 3
 };
 
+static int taskid = -1;
+
 #if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 	static void remap_check_migrate(thread_mapping_t *tm_static, int type)
 #elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
@@ -158,36 +160,51 @@ void *__wrap_GOMP_parallel_end()
 	}
 }
 
-void *__wrap_GOMP_barrier()
+static void barrier()
 {
 	static uint32_t n = 0;
 	
-	__real_GOMP_barrier();
-	#pragma omp master
-	{
-		if (libmapping_is_initialized()) {
-			//printf("pbarrier %llu\n", n);
-			#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
-				libmapping_remap(TYPE_BARRIER, n);
-			#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
-				{
-					thread_mapping_t *tm;
-			
-					tm = get_comm_pattern(TYPE_BARRIER, n);
+	//printf("pbarrier %llu\n", n);
+	#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
+		libmapping_remap(TYPE_BARRIER, n);
+	#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+		{
+			thread_mapping_t *tm;
+	
+			tm = get_comm_pattern(TYPE_BARRIER, n);
 //					assert(tm != NULL);
-			
-					if (tm != NULL)
-						remap_check_migrate(tm, TYPE_BARRIER);
+	
+			if (tm != NULL)
+				remap_check_migrate(tm, TYPE_BARRIER);
+		}
+	#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
+		remap_check_migrate(TYPE_BARRIER);
+	#else
+		#error missed define
+	#endif
+
+	n++;
+}
+
+void *__wrap_GOMP_barrier()
+{
+	if (libmapping_is_initialized()) {
+		/*if (taskid == -1) {
+			#pragma omp critical(libmapping_npb_barrier)
+			{
+				if (taskid == -1) { // yes, again
+					taskid = libmapping_get_current_taskid();
 				}
-			#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
-				remap_check_migrate(TYPE_BARRIER);
-			#else
-				#error missed define
-			#endif
-		
-			n++;
+			}
+		}
+
+		if (taskid == libmapping_get_current_taskid()) {*/
+		if (libmapping_get_aff_of_thread(omp_get_thread_num()) == wrapper_get_coreid_from_hierarchy(0)) {
+			barrier();
 		}
 	}
+	
+	__real_GOMP_barrier();
 }
 
 
