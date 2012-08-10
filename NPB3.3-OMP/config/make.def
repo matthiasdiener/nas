@@ -77,7 +77,7 @@ CLINK	= $(CC)
 #---------------------------------------------------------------------------
 # These macros are passed to the linker 
 #---------------------------------------------------------------------------
-C_LIB  = -lm ../bin/mapping-lib.o ../bin/remap.o ../bin/map_algorithm.o ../bin/libremap.o -lemon -lstdc++
+C_LIB  = ../bin/mapping-lib.o ../bin/remap.o ../bin/map_algorithm.o ../bin/libremap.o -lemon -lstdc++ -lm
 
 #---------------------------------------------------------------------------
 # These macros are passed to the compiler 
