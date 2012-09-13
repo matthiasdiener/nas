@@ -906,7 +906,7 @@ int main( int argc, char **argv )
 
     FILE            *fp;
 
-    syscall(SYS_pt_detect_comm);
+    syscall(sys_pt_detect_comm);
 
 /*  Initialize timers  */
     timer_on = 0;            
