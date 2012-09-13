@@ -40,6 +40,7 @@
  *                                                                       * 
  *************************************************************************/
 
+
 #include "npbparams.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -47,6 +48,10 @@
 #include <omp.h>
 #endif
 
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <sys/syscall.h>
+#include <sys/types.h>
 
 /*****************************************************************/
 /* For serial IS, buckets are not really req'd to solve NPB1 IS  */
@@ -901,6 +906,7 @@ int main( int argc, char **argv )
 
     FILE            *fp;
 
+    syscall(SYS_pt_detect_comm);
 
 /*  Initialize timers  */
     timer_on = 0;            
