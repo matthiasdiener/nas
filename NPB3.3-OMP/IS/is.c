@@ -636,7 +636,7 @@ void rank( int iteration )
     myid = omp_get_thread_num();
     num_procs = omp_get_num_threads();
     // %%%
-    syscall(sys_pt_num_threads, myid);
+    syscall(__NR_pt_numthreads, myid);
 #endif
 
 
