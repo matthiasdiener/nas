@@ -1056,6 +1056,8 @@ int main( int argc, char **argv )
        printf(" Sorting        : %8.3f (%5.2f%%)\n", timecounter, t_percent);
     }
 
+    syscall(__NR_pt_detect_comm);
+
     return 0;
          /**************************/
 }        /*  E N D  P R O G R A M  */
