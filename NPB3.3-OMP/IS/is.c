@@ -432,6 +432,8 @@ void	create_seq( double seed, double a )
 #ifdef _OPENMP
 	myid = omp_get_thread_num();
 	num_procs = omp_get_num_threads();
+	// %%%
+	syscall(__NR_pt_numthreads, myid);
 #else
 	myid = 0;
 	num_procs = 1;
@@ -635,8 +637,6 @@ void rank( int iteration )
 #ifdef _OPENMP
     myid = omp_get_thread_num();
     num_procs = omp_get_num_threads();
-    // %%%
-    syscall(__NR_pt_numthreads, myid);
 #endif
 
 
