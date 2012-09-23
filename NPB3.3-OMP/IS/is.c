@@ -908,7 +908,7 @@ int main( int argc, char **argv )
 
     FILE            *fp;
 
-    syscall(__NR_pt_detect_comm);
+    syscall(__NR_pt_detect_start);
 
 /*  Initialize timers  */
     timer_on = 0;            
@@ -1056,7 +1056,7 @@ int main( int argc, char **argv )
        printf(" Sorting        : %8.3f (%5.2f%%)\n", timecounter, t_percent);
     }
 
-    syscall(__NR_pt_detect_comm);
+    syscall(__NR_pt_detect_stop);
 
     return 0;
          /**************************/
