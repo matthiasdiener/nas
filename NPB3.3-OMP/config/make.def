@@ -39,7 +39,7 @@ F_INC =
 #---------------------------------------------------------------------------
 # Global *compile time* flags for Fortran programs
 #---------------------------------------------------------------------------
-FFLAGS	= -g -mcmodel=medium -O2 -fopenmp
+FFLAGS	= -fno-underscoring -g -mcmodel=medium -O2 -fopenmp
 
 #---------------------------------------------------------------------------
 # Global *link time* flags. Flags for increasing maximum executable 
