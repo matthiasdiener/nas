@@ -432,6 +432,8 @@ void	create_seq( double seed, double a )
 #ifdef _OPENMP
 	myid = omp_get_thread_num();
 	num_procs = omp_get_num_threads();
+	// %%%
+	syscall(__NR_pt_numthreads, myid);
 #else
 	myid = 0;
 	num_procs = 1;
@@ -908,7 +910,7 @@ int main( int argc, char **argv )
 
     FILE            *fp;
 
-    syscall(__NR_pt_detect_comm);
+    syscall(__NR_pt_detect_start);
 
 /*  Initialize timers  */
     timer_on = 0;            
@@ -1055,6 +1057,8 @@ int main( int argc, char **argv )
        t_percent = timecounter/t_total * 100.;
        printf(" Sorting        : %8.3f (%5.2f%%)\n", timecounter, t_percent);
     }
+
+    syscall(__NR_pt_detect_stop);
 
     return 0;
          /**************************/
