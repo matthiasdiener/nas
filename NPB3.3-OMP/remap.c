@@ -199,7 +199,9 @@ void *__wrap_GOMP_barrier()
 		}
 
 		if (taskid == libmapping_get_current_taskid()) {*/
-		if (libmapping_get_aff_of_thread(omp_get_thread_num()) == wrapper_get_coreid_from_hierarchy(0)) {
+		//if (libmapping_get_aff_of_thread(omp_get_thread_num()) == wrapper_get_coreid_from_hierarchy(0)) {
+		#pragma omp master
+		{
 			barrier();
 		}
 	}
