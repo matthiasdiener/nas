@@ -4,6 +4,11 @@
 #include <omp.h>
 #endif
 
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <sys/syscall.h>
+#include <sys/types.h>
+
 /*  Prototype  */
 void wtime( double * );
 
@@ -44,6 +49,7 @@ void timer_clear( int n )
 /*****************************************************************/
 void timer_start( int n )
 {
+    syscall(__NR_pt_detect_start);
     start[n] = elapsed_time();
 }
 
@@ -55,6 +61,7 @@ void timer_stop( int n )
 {
     double t, now;
 
+    syscall(__NR_pt_detect_stop);
     now = elapsed_time();
     t = now - start[n];
     elapsed[n] += t;

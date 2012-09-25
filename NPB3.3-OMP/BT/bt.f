@@ -61,7 +61,6 @@ c---------------------------------------------------------------------
 !$     integer  omp_get_max_threads
 !$     external omp_get_max_threads
 
-       call syscall(312)
 c---------------------------------------------------------------------
 c      Root node reads input file (if it exists) else takes
 c      defaults from parameters
