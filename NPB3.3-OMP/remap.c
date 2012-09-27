@@ -41,10 +41,12 @@ static int taskid = -1;
 
 #if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 	static void remap_check_migrate(thread_mapping_t *tm_static, int type)
-#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
+#elif defined(LIBMAPPING_REAL_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
 	static void remap_check_migrate(int type)
+#else
+	#error missed define	
 #endif
-#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE) || defined(LIBMAPPING_REAL_REMAP_SIMICS)
+#if defined(LIBMAPPING_REMAP_ENABLE)
 	{
 		int code;
 		static int has_barrier = 0;
@@ -58,7 +60,7 @@ static int taskid = -1;
 		
 		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
 			code = libmapping_remap_check_migrate(tm_static);
-		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
+		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
 			code = libmapping_remap_check_migrate();
 		#endif
 		
@@ -86,7 +88,7 @@ void remap_time_step(int step)
 			
 				//{int i, j; printf("comm matrix(type %i value %i)\n", 0, step); for (i=0; i<tm->nthreads; i++) { for (j=0; j<tm->nthreads; j++) { printf("  %llu", tm->comm_matrix[i][j]); } printf("\n"); } printf("\n"); }
 			}
-		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
+		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
 			remap_check_migrate(TYPE_TIME_STEP);
 		#else
 			#error missed define
@@ -118,7 +120,7 @@ void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
 				if (tm != NULL)
 					remap_check_migrate(tm, TYPE_PARALLEL_START);
 			}
-		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
+		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
 			remap_check_migrate(TYPE_PARALLEL_START);
 		#else
 			#error missed define
@@ -150,7 +152,7 @@ void *__wrap_GOMP_parallel_end()
 				if (tm != NULL)
 					remap_check_migrate(tm, TYPE_PARALLEL_END);
 			}
-		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
+		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
 			remap_check_migrate(TYPE_PARALLEL_END);
 		#else
 			#error missed define
@@ -177,7 +179,7 @@ static void barrier()
 			if (tm != NULL)
 				remap_check_migrate(tm, TYPE_BARRIER);
 		}
-	#elif defined(LIBMAPPING_REAL_REMAP_SIMICS)
+	#elif defined(LIBMAPPING_REAL_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
 		remap_check_migrate(TYPE_BARRIER);
 	#else
 		#error missed define
