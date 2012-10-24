@@ -13,8 +13,6 @@
 
 //#define DEBUG
 
-#define ENABLE_REMAP
-
 #ifdef DEBUG
 	#define DPRINTF(...) printf(__VA_ARGS__)
 #else
@@ -43,8 +41,6 @@ static int taskid = -1;
 	static void remap_check_migrate(thread_mapping_t *tm_static, int type)
 #elif defined(LIBMAPPING_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
 	static void remap_check_migrate(int type)
-#else
-	#error missed define	
 #endif
 #if defined(LIBMAPPING_REMAP_ENABLE)
 	{
