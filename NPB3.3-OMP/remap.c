@@ -39,9 +39,9 @@ enum {
 
 static int taskid = -1;
 
-#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+#if defined(LIBMAPPING_REMAP_CONSUME)
 	static void remap_check_migrate(thread_mapping_t *tm_static, int type)
-#elif defined(LIBMAPPING_REAL_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
+#elif defined(LIBMAPPING_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
 	static void remap_check_migrate(int type)
 #else
 	#error missed define	
@@ -58,9 +58,9 @@ static int taskid = -1;
 		else
 			return;
 		
-		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+		#if defined(LIBMAPPING_REMAP_CONSUME)
 			code = libmapping_remap_check_migrate(tm_static);
-		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
+		#elif defined(LIBMAPPING_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
 			code = libmapping_remap_check_migrate();
 		#endif
 		
@@ -74,9 +74,9 @@ void remap_time_step(int step)
 	if (libmapping_is_initialized()) {
 		//printf("xxx %d", step);
 
-		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
+		#if defined(LIBMAPPING_REMAP_PRODUCE)
 			libmapping_remap(TYPE_TIME_STEP, step);
-		#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+		#elif defined(LIBMAPPING_REMAP_CONSUME)
 			{
 				thread_mapping_t *tm;
 			
@@ -88,7 +88,7 @@ void remap_time_step(int step)
 			
 				//{int i, j; printf("comm matrix(type %i value %i)\n", 0, step); for (i=0; i<tm->nthreads; i++) { for (j=0; j<tm->nthreads; j++) { printf("  %llu", tm->comm_matrix[i][j]); } printf("\n"); } printf("\n"); }
 			}
-		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
+		#elif defined(LIBMAPPING_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
 			remap_check_migrate(TYPE_TIME_STEP);
 		#else
 			#error missed define
@@ -108,9 +108,9 @@ void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
 	
 	if (libmapping_is_initialized()) {
 		//printf("pstart %llu\n", n);
-		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
+		#if defined(LIBMAPPING_REMAP_PRODUCE)
 			libmapping_remap(TYPE_PARALLEL_START, n);
-		#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+		#elif defined(LIBMAPPING_REMAP_CONSUME)
 			{
 				thread_mapping_t *tm;
 			
@@ -120,7 +120,7 @@ void *__wrap_GOMP_parallel_start(void *func, void *data, unsigned nt)
 				if (tm != NULL)
 					remap_check_migrate(tm, TYPE_PARALLEL_START);
 			}
-		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
+		#elif defined(LIBMAPPING_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
 			remap_check_migrate(TYPE_PARALLEL_START);
 		#else
 			#error missed define
@@ -140,9 +140,9 @@ void *__wrap_GOMP_parallel_end()
 	
 	if (libmapping_is_initialized()) {
 		//printf("pend %llu\n", n);
-		#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
+		#if defined(LIBMAPPING_REMAP_PRODUCE)
 			libmapping_remap(TYPE_PARALLEL_END, n);
-		#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+		#elif defined(LIBMAPPING_REMAP_CONSUME)
 			{
 				thread_mapping_t *tm;
 			
@@ -152,7 +152,7 @@ void *__wrap_GOMP_parallel_end()
 				if (tm != NULL)
 					remap_check_migrate(tm, TYPE_PARALLEL_END);
 			}
-		#elif defined(LIBMAPPING_REAL_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
+		#elif defined(LIBMAPPING_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
 			remap_check_migrate(TYPE_PARALLEL_END);
 		#else
 			#error missed define
@@ -167,9 +167,9 @@ static void barrier()
 	static uint32_t n = 0;
 	
 	//printf("pbarrier %llu\n", n);
-	#if defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_SIMSIDE)
+	#if defined(LIBMAPPING_REMAP_PRODUCE)
 		libmapping_remap(TYPE_BARRIER, n);
-	#elif defined(LIBMAPPING_REMAP_SIMICS_COMM_PATTERN_REALMACHINESIDE)
+	#elif defined(LIBMAPPING_REMAP_CONSUME)
 		{
 			thread_mapping_t *tm;
 	
@@ -179,7 +179,7 @@ static void barrier()
 			if (tm != NULL)
 				remap_check_migrate(tm, TYPE_BARRIER);
 		}
-	#elif defined(LIBMAPPING_REAL_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
+	#elif defined(LIBMAPPING_REMAP_SIMICS) || defined(LIBMAPPING_PT_ENABLE)
 		remap_check_migrate(TYPE_BARRIER);
 	#else
 		#error missed define
