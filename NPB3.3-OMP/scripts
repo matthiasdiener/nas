@@ -1,0 +1,5 @@
+nm ../bin/bt.W.x |awk '{print $3}' | grep "_$" |grep -v __ | grep -v  "^_" > bt.list
+
+for c in $(cat bt.list); do echo $c; find . -name "*.[hf]" |xargs sed -i s/\\b$c\\b/${c}_b/g; done
+
+gcc -O2 -fopenmp -o test2 BT-*/bt.o  BT-*/initialize.o BT-*/exact_solution.o BT-*/exact_rhs.o BT-*/set_constants.o BT-*/adi.o  BT-*/rhs.o BT-*/x_solve.o BT-*/y_solve.o BT-*/solve_subs.o BT-*/z_solve.o BT-[ab]/add.o BT-[ab]/error.o BT-[ab]/verify.o common/print_results.o common/timers.o common/wtime.o starter_pt.c -lgfortran -Wall -pthread
