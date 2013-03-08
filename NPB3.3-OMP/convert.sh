@@ -1,17 +1,18 @@
 #!/bin/bash
 
-if [ $# -lt 3 ]; then
-	echo "Usage: $0 <binary> <#threads> <class>"
+if [ $# -ne 2 ]; then
+	echo "Usage: $0 <binary> <class>"
 	exit 1
 fi
+
+echo "### Converting source code and compiling it"
 
 LIST=$(nm $1 | awk '{print $3}' | grep "_$" | grep -v __ | grep -v  "^_" | grep -v timer_ | grep -v print_results_ | sort | uniq | sed s/.$//)
 
 PROG=$(basename $1 | sed s/\\..*//)
 DIR=$(basename $1)
-NTHREADS=$2
-CLASS=$3
-
+NTHREADS=15
+CLASS=$2
 
 for i in $(seq 0 $NTHREADS); do
 	echo ${i}
@@ -24,14 +25,18 @@ for i in $(seq 0 $NTHREADS); do
 		(cd $DIRID; find . -name "*.[hf]" -or -name "*.incl" | xargs sed -i s/\\b$sym\\b/${sym}_${i}/g;)
 		(cd $DIRID; find . -name "*.f" | xargs sed -i s/program\\\s.*/subroutine\ ${PROG}$i/;)
 	done
-	(cd $DIRID; make CLASS=$CLASS)
+	(cd $DIRID; make clean; make CLASS=$CLASS link)
 done
 
 echo "#define BENCHMARK $PROG" > ../app.h
-echo "#define NTHREADS $NTHREADS" >> ../app.h
 
-gcc -O2 -fopenmp -o ../${PROG}_${CLASS}_$NTHREADS ../${DIR}_*/*.o ../common/print_results.o ../common/timers.o ../common/wtime.o ../starter_pt.c -lgfortran -Wall -pthread
 
+echo "### Linking Final Binary"
+CMD="gcc -o ../${PROG}_${CLASS}_$NTHREADS -O2 -fopenmp ../${DIR}_*/*.o ../common/print_results.o ../common/timers.o ../common/wtime.o ../starter_pt.c -lgfortran -Wall -pthread"
+
+echo $CMD
+
+$CMD
 
 for i in $(seq 0 $NTHREADS); do
 	DIRID=../${DIR}_$i
@@ -39,3 +44,6 @@ for i in $(seq 0 $NTHREADS); do
 done
 
 rm ../app.h
+
+
+echo "### Done"
