@@ -1,4 +1,5 @@
 *.o
 bin/
+bin_cosched/
 npbparams.h
 setparams
