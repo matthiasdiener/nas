@@ -1,14 +1,41 @@
 #!/bin/bash
 
-
+if [ $# -lt 3 ]; then
+	echo "Usage: $0 <binary> <#threads> <class>"
+	exit 1
+fi
 
 LIST=$(nm $1 | awk '{print $3}' | grep "_$" | grep -v __ | grep -v  "^_" | grep -v timer_ | grep -v print_results_ | sort | uniq | sed s/.$//)
 
-echo $LIST
+PROG=$(basename $1 | sed s/\\..*//)
+DIR=$(basename $1)
+NTHREADS=$2
+CLASS=$3
 
-for sym in $LIST; do
-	echo $sym;
-	echo find . -name "*.[hf]" |xargs sed -i s/\\b$sym\\b/${sym}_b/g;
+
+for i in $(seq 0 $NTHREADS); do
+	echo ${i}
+	DIRID=../${DIR}_$i
+	rm -rf $DIRID
+	mkdir $DIRID
+	cp * $DIRID 2>/dev/null
+	for sym in $LIST; do
+		echo -e \\t $sym;
+		(cd $DIRID; find . -name "*.[hf]" -or -name "*.incl" | xargs sed -i s/\\b$sym\\b/${sym}_${i}/g;)
+		(cd $DIRID; find . -name "*.f" | xargs sed -i s/program\\\s.*/subroutine\ ${PROG}$i/;)
+	done
+	(cd $DIRID; make CLASS=$CLASS)
 done
 
-# gcc -O2 -fopenmp -o test2 BT-*/bt.o  BT-*/initialize.o BT-*/exact_solution.o BT-*/exact_rhs.o BT-*/set_constants.o BT-*/adi.o  BT-*/rhs.o BT-*/x_solve.o BT-*/y_solve.o BT-*/solve_subs.o BT-*/z_solve.o BT-[ab]/add.o BT-[ab]/error.o BT-[ab]/verify.o common/print_results.o common/timers.o common/wtime.o starter_pt.c -lgfortran -Wall -pthread
+echo "#define BENCHMARK $PROG" > ../app.h
+echo "#define NTHREADS $NTHREADS" >> ../app.h
+
+gcc -O2 -fopenmp -o ../${PROG}_${CLASS}_$NTHREADS ../${DIR}_*/*.o ../common/print_results.o ../common/timers.o ../common/wtime.o ../starter_pt.c -lgfortran -Wall -pthread
+
+
+for i in $(seq 0 $NTHREADS); do
+	DIRID=../${DIR}_$i
+	rm -rf $DIRID
+done
+
+rm ../app.h
