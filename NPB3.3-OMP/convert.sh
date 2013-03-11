@@ -22,7 +22,7 @@ for i in $(seq 0 $NTHREADS); do
 	cp * $DIRID 2>/dev/null
 	for sym in $LIST; do
 		echo -e \\t $sym;
-		(cd $DIRID; find . -name "*.[hf]" -or -name "*.incl" | xargs sed -i s/\\b$sym\\b/${sym}_${i}/g;)
+		(cd $DIRID; find . -name "*.[hf]" -or -name "*.incl" | xargs sed -i "/include/!s/\b$sym\b/${sym}_${i}/g";)
 		(cd $DIRID; find . -name "*.f" | xargs sed -i s/program\\\s.*/subroutine\ ${PROG}$i/;)
 	done
 	(cd $DIRID; make clean; make CLASS=$CLASS link)

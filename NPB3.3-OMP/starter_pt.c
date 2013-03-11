@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
 	long i;
 
 	if (argc<2) {
-		printf("Usage: %s <#threads>\n", argv[0]);
+		printf("Usage: %s <#groups>\n", argv[0]);
 		exit(1);
 	}
 
