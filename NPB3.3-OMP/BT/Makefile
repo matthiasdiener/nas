@@ -33,6 +33,8 @@ ${PROGRAM}: config
 		${MAKE} exec;			\
 	fi
 
+link: $(OBJS)
+
 exec: $(OBJS)
 	${FLINK} ${FLINKFLAGS} -o ${PROGRAM} ${OBJS} ${F_LIB}
 
