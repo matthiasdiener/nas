@@ -12,6 +12,8 @@ OBJS = is.o \
        ${COMMON}/c_wtime.o
 
 
+link: config ${OBJS}
+
 ${PROGRAM}: config ${OBJS}
 	${CLINK} ${CLINKFLAGS} -o ${PROGRAM} ${OBJS} ${C_LIB}
 

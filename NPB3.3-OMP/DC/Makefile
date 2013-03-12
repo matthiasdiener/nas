@@ -14,11 +14,13 @@ OBJS = adc.o dc.o extbuild.o rbt.o jobcntl.o \
 # npbparams.h is provided for backward compatibility with NPB compilation
 # header.h: npbparams.h
 
+link: config ${OBJS}
+
 ${PROGRAM}: config ${OBJS} 
 	${CLINK} ${CLINKFLAGS} -o ${PROGRAM} ${OBJS} ${C_LIB}
 
 .c.o:
-	${CCOMPILE} $<
+	${CCOMPILE} -w $<
 
 adc.o:      adc.c npbparams.h
 dc.o:       dc.c adcc.h adc.h macrodef.h npbparams.h
