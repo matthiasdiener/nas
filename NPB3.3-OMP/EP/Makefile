@@ -12,6 +12,7 @@ include ../sys/make.common
 ${PROGRAM}: config ${OBJS}
 	${FLINK} ${FLINKFLAGS} -o ${PROGRAM} ${OBJS} ${F_LIB}
 
+link: config ${OBJS}
 
 ep.o:		ep.f npbparams.h
 	${FCOMPILE} ep.f
