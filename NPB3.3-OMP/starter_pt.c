@@ -12,14 +12,14 @@
 #define STR(s) #s
 #define XSTR(s) STR(s)
 #define CASEDEF(i) case i: printf("Starting %s\n", XSTR(BM(i))); extern void BM(i)(void); BM(i)(); break;
-#define CA CASEDEF(__COUNTER__)
+#define CASE CASEDEF(__COUNTER__)
 
 
 void* call(void *info) {
 	long id = (long) info;
 
 	switch(id) {
-		CA CA CA CA CA CA CA CA CA CA CA CA CA CA CA CA 
+		CASE CASE CASE CASE CASE CASE CASE CASE CASE CASE CASE CASE CASE CASE CASE CASE 
 	}
 
 	return NULL;
