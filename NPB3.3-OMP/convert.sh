@@ -5,10 +5,13 @@ if [ $# -ne 1 ]; then
 	exit 1
 fi
 
+NTHREADS=15
+CLASS=$1
+
 echo "### Compiling original source code and finding symbols"
 
 make clean
-make CLASS=A
+make CLASS=$CLASS
 
 BLACKLIST="print_results|timer|storage|c_print_results" # Can not be empty
 LIST=$(nm *.o | awk '{print $3}' | grep "_$" | grep -v __ | grep -v  "^_" | sort | uniq | sed s/.$// | egrep -v "\b($BLACKLIST)\b" )
@@ -18,9 +21,6 @@ if [[ -z $LIST ]]; then
 fi
 
 DIR=$(basename $PWD | tr '[A-Z]' '[a-z]')
-
-NTHREADS=15
-CLASS=$1
 
 echo "### Converting source code and compiling it"
 
