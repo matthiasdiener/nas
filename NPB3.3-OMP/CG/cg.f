@@ -818,8 +818,8 @@ c-------end   of makea------------------------------
 
 c---------------------------------------------------------------------
 c---------------------------------------------------------------------
-      subroutine sparse( a, colidx, rowstr, n, nz, nonzer, arow, acol, 
-     >                   aelt, firstrow, lastrow, last_n, 
+      subroutine sparse( a, colidx, rowstr, n, nz, nonzer, arow,
+     >                   acol, aelt, firstrow, lastrow, last_n,
      >                   v, iv, nzloc, rcond, shift )
 c---------------------------------------------------------------------
 c---------------------------------------------------------------------
