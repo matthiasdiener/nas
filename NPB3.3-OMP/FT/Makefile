@@ -12,7 +12,7 @@ OBJS = ft.o ${COMMON}/${RAND}.o ${COMMON}/print_results.o \
 ${PROGRAM}: config ${OBJS}
 	${FLINK} ${FLINKFLAGS} -o ${PROGRAM} ${OBJS} ${F_LIB}
 
-
+link: config ${OBJS}
 
 .f.o:
 	${FCOMPILE} $<
