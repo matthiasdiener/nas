@@ -21,7 +21,7 @@ include ../sys/make.common
 
 # header.h: npbparams.h
 
-link: config ${OBJS}
+link: config ${OBJS} transfer.o
 
 ${PROGRAM}: config ${OBJS}
 	@if [ x$(UPDATE) = xau ] ; then			\
