@@ -9,6 +9,8 @@ OBJS = cg.o ${COMMON}/print_results.o  \
 
 include ../sys/make.common
 
+link: config ${OBJS}
+
 ${PROGRAM}: config ${OBJS}
 	${FLINK} ${FLINKFLAGS} -o ${PROGRAM} ${OBJS} ${F_LIB}
 
