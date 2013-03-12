@@ -23,6 +23,8 @@ include ../sys/make.common
 
 # header.h: npbparams.h
 
+link: config ${OBJS}
+
 ${PROGRAM}: config ${OBJS}
 	${FLINK} ${FLINKFLAGS} -o ${PROGRAM} ${OBJS} ${F_LIB}
 

@@ -21,6 +21,8 @@ include ../sys/make.common
 
 # header.h: npbparams.h
 
+link: config ${OBJS}
+
 ${PROGRAM}: config ${OBJS}
 	@if [ x$(UPDATE) = xau ] ; then			\
 		${MAKE} PROGRAM=${PROGRAM} ua-au;	\
