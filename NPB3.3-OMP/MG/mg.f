@@ -101,7 +101,7 @@ c---------------------------------------------------------------------
          timeron = .true.
          t_names(t_init) = 'init'
          t_names(t_bench) = 'benchmk'
-         t_names(t_mg3P) = 'mg3P'
+         t_names(t_mg3p) = 'mg3p'
          t_names(t_psinv) = 'psinv'
          t_names(t_resid) = 'resid'
          t_names(t_rprj3) = 'rprj3'
@@ -225,7 +225,7 @@ c     write(*,*)' about to evaluate resid, k=',k
 c---------------------------------------------------------------------
 c     One iteration for startup
 c---------------------------------------------------------------------
-      call mg3P(u,v,r,a,c,n1,n2,n3,k)
+      call mg3p(u,v,r,a,c,n1,n2,n3,k)
       call resid(u,v,r,n1,n2,n3,a,k)
       call setup(n1,n2,n3,k)
       call zero3(u,n1,n2,n3)
@@ -255,9 +255,9 @@ c---------------------------------------------------------------------
             write(*,80) it
    80       format('  iter ',i3)
          endif
-         if (timeron) call timer_start(T_mg3P)
-         call mg3P(u,v,r,a,c,n1,n2,n3,k)
-         if (timeron) call timer_stop(T_mg3P)
+         if (timeron) call timer_start(T_mg3p)
+         call mg3p(u,v,r,a,c,n1,n2,n3,k)
+         if (timeron) call timer_stop(T_mg3p)
          if (timeron) call timer_start(T_resid2)
          call resid(u,v,r,n1,n2,n3,a,k)
          if (timeron) call timer_stop(T_resid2)
@@ -447,7 +447,7 @@ c---------------------------------------------------------------------
 c---------------------------------------------------------------------
 c---------------------------------------------------------------------
 
-      subroutine mg3P(u,v,r,a,c,n1,n2,n3,k)
+      subroutine mg3p(u,v,r,a,c,n1,n2,n3,k)
 
 c---------------------------------------------------------------------
 c---------------------------------------------------------------------
