@@ -17,13 +17,11 @@ if [[ -z $LIST ]]; then
 	LIST=$(nm *.o | grep -v "\bU\b" | awk '{print $3}' | grep -v "^\." |grep -v "_omp_" | egrep -v "\b($BLACKLIST)\b" | grep -v "\bmain\b")
 fi
 
-# echo LIST $LIST
-
 DIR=$(basename $PWD | tr '[A-Z]' '[a-z]')
 
 NTHREADS=15
 CLASS=$1
-set -x
+
 echo "### Converting source code and compiling it"
 
 for i in $(seq 0 $NTHREADS); do
