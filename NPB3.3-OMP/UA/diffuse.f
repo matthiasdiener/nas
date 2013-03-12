@@ -106,7 +106,7 @@ c.......compute matrix vector product: (theta pm) in the specification
 c.......compute pdiffp which is (A theta pm) in the specification
 c$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(ie) 
         do ie=1, nelt
-          call laplacian(pdiffp(1,1,1,ie),pdiff(1,1,1,ie),size_e(ie))
+        call laplacian(pdiffp(1,1,1,ie),pdiff(1,1,1,ie),size_e(ie))
         end do
 c$OMP END PARALLEL DO
 
