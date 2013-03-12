@@ -28,7 +28,7 @@ c.....double precision arrays associated with collocation points
      &       trhs (lx1,lx1,lx1,lelt), t     (lx1,lx1,lx1,lelt), 
      &       tmult(lx1,lx1,lx1,lelt), dpcelm(lx1,lx1,lx1,lelt), 
      &       pdiff(lx1,lx1,lx1,lelt), pdiffp(lx1,lx1,lx1,lelt)
-      common /colldp/ ta1, ta2, trhs, t, tmult, dpcelm, pdiff, pdiffp
+      common /colldp/ ta1,ta2,trhs,t,tmult,dpcelm,pdiff,pdiffp
 
 c.....double precision arays associated with mortar points
       double precision
