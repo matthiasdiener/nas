@@ -103,17 +103,19 @@ int main ( int argc, char * argv[] )
   ADC_VIEW_PARS *adcpp;
   int32 retCode;
 
+  // int argc = 1;
+
   fprintf(stdout,"\n\n NAS Parallel Benchmarks (NPB3.3-OMP) - DC Benchmark\n\n" );
-  if(argc!=3){
+  // if(argc!=3){
     fprintf(stdout," No Paramter file. Using compiled defaults\n");
-  }
-  if(argc>3 || (argc>1 && !isdigit(argv[1][0]))){
-    fprintf(stderr,"Usage: <program name> <amount of memory>\n");
-    fprintf(stderr,"       <file of parameters>\n");
-    fprintf(stderr,"Example: bin/dc.S 1000000 DC/ADC.par\n");
-    fprintf(stderr,"The last argument, (a parameter file) can be skipped\n");
-    exit(1);
-  }
+  // }
+  // if(argc>3 || (argc>1 && !isdigit(argv[1][0]))){
+  //   fprintf(stderr,"Usage: <program name> <amount of memory>\n");
+  //   fprintf(stderr,"       <file of parameters>\n");
+  //   fprintf(stderr,"Example: bin/dc.S 1000000 DC/ADC.par\n");
+  //   fprintf(stderr,"The last argument, (a parameter file) can be skipped\n");
+  //   exit(1);
+  // }
 
   if(  !(parp = (ADC_PAR*) malloc(sizeof(ADC_PAR)))
      ||!(adcpp = (ADC_VIEW_PARS*) malloc(sizeof(ADC_VIEW_PARS)))){
@@ -122,13 +124,13 @@ int main ( int argc, char * argv[] )
   }
   initADCpar(parp);
   parp->clss=CLASS;
-  if(argc!=3){
+  // if(argc!=3){
     parp->dim=attrnum;
     parp->tuplenum=input_tuples;    
-  }else if( (argc==3)&&(!ParseParFile(argv[2], parp))) {
-    PutErrMsg("main.ParseParFile failed")
-    exit(1);
-  }
+  // }else if( (argc==3)&&(!ParseParFile(argv[2], parp))) {
+  //   PutErrMsg("main.ParseParFile failed")
+  //   exit(1);
+  // }
   ShowADCPar(parp); 
   if(!GenerateADC(parp)) {
      PutErrMsg("main.GenerateAdc failed")
@@ -141,9 +143,9 @@ int main ( int argc, char * argv[] )
   adcpp->nm = parp->mnum;
   adcpp->nTasks = 1;
 
-  if(argc>=2)
-    adcpp->memoryLimit = atoi(argv[1]);
-  else
+  // if(argc>=2)
+  //   adcpp->memoryLimit = atoi(argv[1]);
+  // else
     adcpp->memoryLimit = 0;
   if(adcpp->memoryLimit <= 0){
     /* size of rb-tree with tuplenum nodes */
