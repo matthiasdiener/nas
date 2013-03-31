@@ -19,6 +19,11 @@ SYST:=$(shell uname)
 # linking is done with       $(FLINK) $(F_LIB) $(FLINKFLAGS)
 #---------------------------------------------------------------------------
 ifeq ($(SYST), Linux)
+
+#WRAP = -Wl,-wrap,malloc -Wl,-wrap,free -Wl,-wrap,pthread_create -Wl,-wrap,pthread_exit -Wl,-wrap,GOMP_barrier -Wl,-wrap,GOMP_parallel_start -Wl,-wrap,GOMP_parallel_end
+
+WRAP = -Wl,-wrap,GOMP_parallel_start -Wl,-wrap,GOMP_parallel_end -Wl,-wrap,GOMP_barrier -Wl,-wrap,pthread_create
+
 #---------------------------------------------------------------------------
 # This is the fortran compiler used for Fortran programs
 #---------------------------------------------------------------------------
@@ -29,7 +34,7 @@ FLINK	= $(F77)
 #---------------------------------------------------------------------------
 # These macros are passed to the linker 
 #---------------------------------------------------------------------------
-F_LIB  = 
+F_LIB  = -ldl -Wl,--no-as-needed ../../../libmapping/libmapping.a
 
 #---------------------------------------------------------------------------
 # These macros are passed to the compiler 
@@ -39,13 +44,16 @@ F_INC =
 #---------------------------------------------------------------------------
 # Global *compile time* flags for Fortran programs
 #---------------------------------------------------------------------------
-FFLAGS	= -g -mcmodel=medium -O2 -fopenmp
+FFLAGS	= -g -O2 -fopenmp
+#-Wl,--no-as-needed $(WRAP)
+#-mcmodel=medium
 
 #---------------------------------------------------------------------------
 # Global *link time* flags. Flags for increasing maximum executable 
 # size usually go here. 
 #---------------------------------------------------------------------------
 FLINKFLAGS = -O2 -fopenmp
+#$(WRAP)
 
 
 #---------------------------------------------------------------------------
@@ -97,13 +105,14 @@ C_INC =
 # _LARGEFILE64_SOURCE - are standard compiler flags which allow to work with 
 # files larger than 2GB.
 #---------------------------------------------------------------------------
-CFLAGS	= -g -O2 -fopenmp -mcmodel=medium
+CFLAGS	= -g -O2 -fopenmp
+#-mcmodel=medium
 
 #---------------------------------------------------------------------------
 # Global *link time* flags. Flags for increasing maximum executable 
 # size usually go here. 
 #---------------------------------------------------------------------------
-CLINKFLAGS = -O2 -fopenmp
+CLINKFLAGS = -O2 -fopenmp -Wl,-wrap,malloc -Wl,-wrap,free
 
 
 #---------------------------------------------------------------------------
