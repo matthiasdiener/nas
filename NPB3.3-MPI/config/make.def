@@ -29,7 +29,7 @@
 #---------------------------------------------------------------------------
 # This is the fortran compiler used for MPI programs
 #---------------------------------------------------------------------------
-MPIF77 = f77
+MPIF77 = gfortran
 # This links MPI fortran programs; usually the same as ${MPIF77}
 FLINK	= $(MPIF77)
 
@@ -41,7 +41,7 @@ FMPI_LIB  = -lmpi
 #---------------------------------------------------------------------------
 # These macros are passed to the compiler to help find 'mpif.h'
 #---------------------------------------------------------------------------
-FMPI_INC =
+FMPI_INC = -I/usr/include/mpich2/
 
 #---------------------------------------------------------------------------
 # Global *compile time* flags for Fortran programs
