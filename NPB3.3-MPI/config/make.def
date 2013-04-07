@@ -46,7 +46,7 @@ FMPI_INC = -I/usr/include/mpich2/
 #---------------------------------------------------------------------------
 # Global *compile time* flags for Fortran programs
 #---------------------------------------------------------------------------
-FFLAGS	= -O2 -g
+FFLAGS	= -O2 -g -mcmodel=medium
 
 #---------------------------------------------------------------------------
 # Global *link time* flags. Flags for increasing maximum executable 
@@ -87,12 +87,12 @@ CMPI_LIB  = -lmpi
 #---------------------------------------------------------------------------
 # These macros are passed to the compiler to help find 'mpi.h'
 #---------------------------------------------------------------------------
-CMPI_INC =
+CMPI_INC = -I/usr/include/mpich2/
 
 #---------------------------------------------------------------------------
 # Global *compile time* flags for C programs
 #---------------------------------------------------------------------------
-CFLAGS	= -O2 -g
+CFLAGS	= -O2 -g -mcmodel=medium
 
 #---------------------------------------------------------------------------
 # Global *link time* flags. Flags for increasing maximum executable 
