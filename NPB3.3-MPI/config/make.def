@@ -36,7 +36,7 @@ FLINK	= $(MPIF77)
 #---------------------------------------------------------------------------
 # These macros are passed to the linker to help link with MPI correctly
 #---------------------------------------------------------------------------
-FMPI_LIB  = -lmpi
+FMPI_LIB  = -lmpi -lmpl
 
 #---------------------------------------------------------------------------
 # These macros are passed to the compiler to help find 'mpif.h'
@@ -82,7 +82,7 @@ CLINK	= $(MPICC)
 #---------------------------------------------------------------------------
 # These macros are passed to the linker to help link with MPI correctly
 #---------------------------------------------------------------------------
-CMPI_LIB  = -lmpi
+CMPI_LIB  = -lmpi -lmpl
 
 #---------------------------------------------------------------------------
 # These macros are passed to the compiler to help find 'mpi.h'
