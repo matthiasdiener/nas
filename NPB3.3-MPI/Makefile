@@ -46,6 +46,7 @@ dt: header
 
 # Awk script courtesy cmg@cray.com, modified by Haoqiang Jin
 suite:
+	@ mkdir -p bin
 	@ awk -f sys/suite.awk SMAKE=$(MAKE) $(SFILE) | $(SHELL)
 
 
