@@ -8,46 +8,47 @@ default: header
 
 BT: bt
 bt: header
-	cd BT; $(MAKE) CLASS=$(CLASS) VERSION=$(VERSION)
+	cd BT; $(MAKE) -j8 CLASS=$(CLASS) VERSION=$(VERSION)
 
 SP: sp
 sp: header
-	cd SP; $(MAKE) CLASS=$(CLASS)
+	cd SP; $(MAKE) -j8 CLASS=$(CLASS)
 
 LU: lu
 lu: header
-	cd LU; $(MAKE) CLASS=$(CLASS) VERSION=$(VERSION)
+	cd LU; $(MAKE) -j8 CLASS=$(CLASS) VERSION=$(VERSION)
 
 MG: mg
 mg: header
-	cd MG; $(MAKE) CLASS=$(CLASS)
+	cd MG; $(MAKE) -j8 -j8 CLASS=$(CLASS)
 
 FT: ft
 ft: header
-	cd FT; $(MAKE) CLASS=$(CLASS)
+	cd FT; $(MAKE) -j8 CLASS=$(CLASS)
 
 IS: is
 is: header
-	cd IS; $(MAKE) CLASS=$(CLASS)
+	cd IS; $(MAKE) -j8 CLASS=$(CLASS)
 
 CG: cg
 cg: header
-	cd CG; $(MAKE) CLASS=$(CLASS)
+	cd CG; $(MAKE) -j8 CLASS=$(CLASS)
 
 EP: ep
 ep: header
-	cd EP; $(MAKE) CLASS=$(CLASS)
+	cd EP; $(MAKE) -j8 CLASS=$(CLASS)
 
 UA: ua
 ua: header	       
-	cd UA; $(MAKE) CLASS=$(CLASS)
+	cd UA; $(MAKE) -j8 CLASS=$(CLASS)
 
 DC: dc
 dc: header	       
-	cd DC; $(MAKE) CLASS=$(CLASS)
+	cd DC; $(MAKE) -j8 CLASS=$(CLASS)
 
 # Awk script courtesy cmg@cray.com, modified by Haoqiang Jin
 suite:
+	@ mkdir -p bin
 	@ awk -f sys/suite.awk SMAKE=$(MAKE) $(SFILE) | $(SHELL)
 
 
@@ -66,6 +67,7 @@ veryclean: clean
 	- rm -f bin/ep.* bin/cg.* bin/ua.* bin/dc.*
 
 header:
+	@ mkdir -p bin
 	@ sys/print_header
 
 
