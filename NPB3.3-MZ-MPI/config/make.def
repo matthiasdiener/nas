@@ -46,13 +46,13 @@ F_INC =
 #---------------------------------------------------------------------------
 # Global *compile time* flags for Fortran programs
 #---------------------------------------------------------------------------
-FFLAGS	= -O2 -g -mcmodel=medium
+FFLAGS	= -O2 -g -mcmodel=medium -fopenmp
 
 #---------------------------------------------------------------------------
 # Global *link time* flags. Flags for increasing maximum executable 
 # size usually go here. 
 #---------------------------------------------------------------------------
-FLINKFLAGS = -O2
+FLINKFLAGS = -O2 -fopenmp
 
 
 #---------------------------------------------------------------------------
@@ -92,13 +92,13 @@ C_INC =
 #---------------------------------------------------------------------------
 # Global *compile time* flags for C programs
 #---------------------------------------------------------------------------
-CFLAGS	= -O2 -g -mcmodel=medium
+CFLAGS	= -O2 -g -mcmodel=medium -fopenmp
 
 #---------------------------------------------------------------------------
 # Global *link time* flags. Flags for increasing maximum executable 
 # size usually go here. 
 #---------------------------------------------------------------------------
-CLINKFLAGS = -O2
+CLINKFLAGS = -O2 -fopenmp
 
 
 #---------------------------------------------------------------------------
