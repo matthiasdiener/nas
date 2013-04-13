@@ -1,18 +1,21 @@
 #!/bin/bash
 
+if [ $# -ne 5 ]; then
+	echo "Usage: $0 <version> <#threads> <#runs> <size> <benchmarks>"
+	exit 1
+fi
 
-VER="MPI"
+
+VER=$1
+THREADS=$2
+RUNS=$3
+SIZE=$4
+BM=$5
+
+
 DIR="NPB3.3-$VER/bin"
-THREADS="16"
-RUNS=10
-BM="bt cg ep ft is lu mg sp"
-SIZE="B"
-
 
 OUTPATH=results/$VER/$THREADS/$SIZE
-
-mkdir -p $OUTPATH
-
 
 for bm in $BM; do
 	mkdir -p $OUTPATH/$bm
