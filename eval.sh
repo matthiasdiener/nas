@@ -1,15 +1,16 @@
 #!/bin/bash
 
-if [ $# -ne 3 ]; then
-	echo "Usage: $0 <version> <#threads> <size>"
+if [ $# -ne 4 ]; then
+	echo "Usage: $0 <version> <#threads> <size> <mapping>"
 	exit 1
 fi
 
-VER=$1
+VER=${1^^}
 THREADS=$2
-SIZE=$3
+SIZE=${3^^}
+MAP_ALGO=${4^^}
 
-OUTPATH=results/$VER/$THREADS/$SIZE
+OUTPATH=results/$VER/$THREADS/$SIZE/$MAP_ALGO
 
 cd $OUTPATH
 

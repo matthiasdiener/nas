@@ -47,9 +47,15 @@ do_map() {
 				MAP="$MAP$cpu,"
 			done
 			MAP=${MAP:0:${#MAP} - 1} ;;
-		"OS") # OS mapping
+
+		"OS") # OS mapping, do nothing
 			MAP=""
 			;;
+
+		"SPCD") # SPCD handles mapping, do nothing
+			MAP=""
+			;;
+
 		*)
 			echo "Illegal Mapping '${MAP_ALGO}'"
 			usage 2
