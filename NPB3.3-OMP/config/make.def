@@ -22,7 +22,7 @@ ifeq ($(SYST), Linux)
 
 #WRAP = -Wl,-wrap,malloc -Wl,-wrap,free -Wl,-wrap,pthread_create -Wl,-wrap,pthread_exit -Wl,-wrap,GOMP_barrier -Wl,-wrap,GOMP_parallel_start -Wl,-wrap,GOMP_parallel_end
 
-WRAP = -Wl,-wrap,GOMP_parallel_start -Wl,-wrap,GOMP_parallel_end -Wl,-wrap,GOMP_barrier -Wl,-wrap,pthread_create
+#WRAP = -Wl,-wrap,GOMP_parallel_start -Wl,-wrap,GOMP_parallel_end -Wl,-wrap,GOMP_barrier -Wl,-wrap,pthread_create
 
 #---------------------------------------------------------------------------
 # This is the fortran compiler used for Fortran programs
@@ -34,7 +34,8 @@ FLINK	= $(F77)
 #---------------------------------------------------------------------------
 # These macros are passed to the linker 
 #---------------------------------------------------------------------------
-F_LIB  = -ldl -Wl,--no-as-needed ../../../libmapping/libmapping.a
+F_LIB  = -L../../../libmapping/ -lmapping
+#-ldl -Wl,--no-as-needed ../../../libmapping/libmapping.a
 
 #---------------------------------------------------------------------------
 # These macros are passed to the compiler 
@@ -83,7 +84,7 @@ CLINK	= $(CC)
 #---------------------------------------------------------------------------
 # These macros are passed to the linker 
 #---------------------------------------------------------------------------
-C_LIB  = -lm
+C_LIB  = -L../../../libmapping/ -lmapping -lm
 
 #---------------------------------------------------------------------------
 # These macros are passed to the compiler 
@@ -112,7 +113,8 @@ CFLAGS	= -g -O2 -fopenmp
 # Global *link time* flags. Flags for increasing maximum executable 
 # size usually go here. 
 #---------------------------------------------------------------------------
-CLINKFLAGS = -O2 -fopenmp -Wl,-wrap,malloc -Wl,-wrap,free
+CLINKFLAGS = -O2 -fopenmp
+#-Wl,-wrap,malloc -Wl,-wrap,free
 
 
 #---------------------------------------------------------------------------
@@ -122,7 +124,7 @@ CLINKFLAGS = -O2 -fopenmp -Wl,-wrap,malloc -Wl,-wrap,free
 # this compiler go here also; typically there are few flags required; hence 
 # there are no separate macros provided for such flags.
 #---------------------------------------------------------------------------
-UCC	= cc
+UCC	= gcc
 
 
 #---------------------------------------------------------------------------
