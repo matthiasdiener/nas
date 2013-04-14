@@ -58,7 +58,7 @@ do_map() {
 
 DIR="NPB3.3-$VER/bin"
 
-OUTPATH=results/$VER/$THREADS/$SIZE
+OUTPATH=results/$VER/$THREADS/$SIZE/$MAP_ALGO
 
 for bm in $BM; do
 	mkdir -p $OUTPATH/$bm
