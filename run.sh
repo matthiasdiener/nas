@@ -67,5 +67,6 @@ for bm in $BM; do
 		name=$OUTPATH/$bm/$(date|tr ' ' '-').txt
 		# echo $i
 		echo mpirun $MAP -np $THREADS $DIR/$bm.$SIZE.$THREADS | tee $name
+		sleep 1
 	done
 done
