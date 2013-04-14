@@ -1,5 +1,7 @@
 #!/bin/bash
 
+trap 'exit 3' SIGINT
+
 usage() {
 	echo "Usage: $0 <version> <#threads> <#runs> <size> <benchmarks> <mapping>"
 	echo "Available Mappings: round-robin (RR), random static (RS), operating system (OS)"
@@ -9,8 +11,6 @@ usage() {
 if [ $# -ne 6 ]; then
 	usage 1
 fi
-
-trap 'exit 3' SIGINT
 
 VER=${1^^}
 THREADS=$2
@@ -29,8 +29,8 @@ do_map() {
 	MAP="-binding user:"
 	case ${MAP_ALGO} in
 		"RR") # round robin
-			for i in $(seq 0 $(($THREADS-1))); do
-				MAP="$MAP$i,"
+			for j in $(seq 0 $(($THREADS-1))); do
+				MAP="$MAP$j,"
 			done
 			MAP=${MAP:0:${#MAP} - 1} ;;
 
@@ -62,11 +62,11 @@ OUTPATH=results/$VER/$THREADS/$SIZE
 
 for bm in $BM; do
 	mkdir -p $OUTPATH/$bm
-	for i in $(seq 1 $RUNS); do
-		do_map $i
-		name=$OUTPATH/$bm/$(date|tr ' ' '-').txt
-		# echo $i
-		echo mpirun $MAP -np $THREADS $DIR/$bm.$SIZE.$THREADS | tee $name
+	for run in $(seq 1 $RUNS); do
+		do_map $run # calculate new mapping for this run
+		name=$OUTPATH/$bm/$(date|tr ' ' '-').txt # name of output file
+		echo $run
+		mpirun $MAP -np $THREADS $DIR/$bm.$SIZE.$THREADS | tee $name
 		sleep 1
 	done
 done
