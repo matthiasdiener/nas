@@ -18,8 +18,8 @@ ${PROGRAM}: config ${OBJS}
 .c.o:
 	${CCOMPILE} $<
 
-dt.o:             dt.c  npbparams.h
-DGraph.o:	DGraph.c DGraph.h
+dt.o:             dt.c  npbparams.h config
+DGraph.o:	DGraph.c DGraph.h config
 
 clean:
 	- rm -f *.o *~ mputil*
