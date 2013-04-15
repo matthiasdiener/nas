@@ -39,7 +39,7 @@ do_map() {
 			mapped=()
 			RANDOM=$1
 			for j in $(seq 0 $(($THREADS-1))); do
-				while [ 1 ]; do
+				while [ 1 ]; do # find unused processing unit
 					cpu=$(($RANDOM%$(($PUS+1))))
 					if [ "${mapped[$cpu]}" != "x" ]; then break; fi
 				done
