@@ -676,7 +676,7 @@ int main(int argc,char **argv ){
     MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
 
-     if(argc!=2||
+   /*  if(argc!=2||
                 (  strncmp(argv[1],"BH",2)!=0
                  &&strncmp(argv[1],"WH",2)!=0
                  &&strncmp(argv[1],"SH",2)!=0
@@ -692,15 +692,25 @@ int main(int argc,char **argv ){
       }
       MPI_Finalize();
       exit(0);
-    } 
-   if(strncmp(argv[1],"BH",2)==0){
+    }*/
+   if(argc==1 || strncmp(argv[1],"BH",2)==0){
       dg=buildBH(CLASS);
     }else if(strncmp(argv[1],"WH",2)==0){
       dg=buildWH(CLASS);
     }else if(strncmp(argv[1],"SH",2)==0){
       dg=buildSH(CLASS);
-    }
-
+    } else {
+      if(my_rank==0){
+        fprintf(stderr,"** Usage: mpirun -np N ../bin/dt.S GraphName\n");
+        fprintf(stderr,"** Where \n   - N is integer number of MPI processes\n");
+        fprintf(stderr,"   - S is the class S, W, or A \n");
+        fprintf(stderr,"   - GraphName is the communication graph name BH, WH, or SH.\n");
+        fprintf(stderr,"   - the number of MPI processes N should not be be less than \n");
+        fprintf(stderr,"     the number of nodes in the graph\n");
+      }
+      MPI_Finalize();
+      exit(0);
+}
     if(timer_on&&dg->numNodes+1>timers_tot){
       timer_on=0;
       if(my_rank==0)
