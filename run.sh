@@ -6,34 +6,30 @@ ORACLE_FILE=oracle_$(hostname).sh
 source $ORACLE_FILE
 
 usage() {
-	echo "Usage: $0 <version> <#threads> <#runs> <size> <benchmarks> <mapping>"
+	echo "Usage: $0 <version> <#procs> <#threads> <#runs> <size> <benchmarks> <mapping>"
 	echo "Available Mappings: round-robin (RR), random static (RS), operating system (OS), Oracle (ORACLE)"
 	exit $1
 }
 
-if [ $# -ne 6 ]; then
-	usage 1
-fi
+[ $# -eq 7 ] || usage 1
 
 VER=${1^^}
-THREADS=$2
-RUNS=$3
-SIZE=${4^^}
-BM=${5,,}
-MAP_ALGO=${6^^}
+PROCS=$2
+THREADS=$3
+RUNS=$4
+SIZE=${5^^}
+BM=${6,,}
+MAP_ALGO=${7^^}
 
 PUS=$(cat /proc/cpuinfo | grep processor | tail -1 | awk '{print $3}')
-if [ $(($THREADS-1)) -gt $PUS ]; then
-	echo "Number of threads larger than number of processors, cannot continue"
-	exit 4
-fi
+
 
 do_map() {
 	MAP="-binding user:"
 	case ${MAP_ALGO} in
 		"RR") # round robin
 			for j in $(seq 0 $(($THREADS-1))); do
-				MAP="$MAP$j,"
+				MAP+="$j,"
 			done
 			MAP=${MAP:0:${#MAP} - 1}
 			;;
@@ -41,6 +37,10 @@ do_map() {
 		"RS") # random static
 			unset mapped
 			mapped=()
+			if [ $(($THREADS-1)) -gt $PUS ]; then
+				echo "Number of threads larger than number of processors, cannot continue"
+				exit 4
+			fi
 			RANDOM=$1
 			for j in $(seq 0 $(($THREADS-1))); do
 				while [ 1 ]; do # find unused processing unit
@@ -48,7 +48,7 @@ do_map() {
 					if [ "${mapped[$cpu]}" != "x" ]; then break; fi
 				done
 				mapped[$cpu]="x"
-				MAP="$MAP$cpu,"
+				MAP+="$cpu,"
 			done
 			MAP=${MAP:0:${#MAP} - 1}
 			;;
@@ -61,7 +61,7 @@ do_map() {
 			MAP=""
 			;;
 
-		"ORACLE")
+		"ORACLE") #oracle mapping from machine file "oracle_$(hostname).sh"
 			varname=MAP_$bm$THREADS
 			MAP+=${!varname}
 			;;
@@ -75,16 +75,15 @@ do_map() {
 
 DIR="NPB3.3-$VER/bin"
 
-OUTPATH=results/$VER/$THREADS/$SIZE/$MAP_ALGO
+OUTPATH=results/$VER/P$PROCS-T$THREADS/$SIZE/$MAP_ALGO
 
 for bm in $BM; do
 	mkdir -p $OUTPATH/$bm
 	for run in $(seq 1 $RUNS); do
 		do_map $run $bm# calculate new mapping for this run
 		name=$OUTPATH/$bm/$(date|tr ' ' '-').txt # name of output file
-		cmd="mpirun $MAP -np $THREADS $DIR/$bm.$SIZE.$THREADS"
-		echo "Run $run - $cmd" | tee $name
-		$cmd | tee -a $name
+		cmd="OMP_NUM_THREADS=$THREADS mpirun $MAP -np $PROCS $DIR/$bm.$SIZE.$PROCS"
+		echo "Run $run - '$cmd'" | tee $name
 		sleep 1
 	done
 done
