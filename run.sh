@@ -84,6 +84,7 @@ for bm in $BM; do
 		name=$OUTPATH/$bm/$(date|tr ' ' '-').txt # name of output file
 		cmd="OMP_NUM_THREADS=$THREADS mpirun $MAP -np $PROCS $DIR/$bm.$SIZE.$PROCS"
 		echo "Run $run - '$cmd'" | tee $name
+		sh -c "$cmd" | tee -a $name
 		sleep 1
 	done
 done
