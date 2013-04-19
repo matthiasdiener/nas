@@ -77,6 +77,20 @@ DIR="NPB3.3-$VER/bin"
 
 OUTPATH=results/$VER/P$PROCS-T$THREADS/$SIZE/$MAP_ALGO
 
+function float_eval()
+{
+    local stat=0
+    local result=0.0
+    if [[ $# -gt 0 ]]; then
+        result=$(echo "scale=2; $*" | bc -q 2>/dev/null)
+        stat=$?
+        if [[ $stat -eq 0  &&  -z "$result" ]]; then stat=1; fi
+    fi
+    echo $result
+    return $stat
+}
+
+
 for bm in $BM; do
 	mkdir -p $OUTPATH/$bm
 	for run in $(seq 1 $RUNS); do
@@ -84,7 +98,20 @@ for bm in $BM; do
 		name=$OUTPATH/$bm/$(date|tr ' ' '-').txt # name of output file
 		cmd="OMP_NUM_THREADS=$THREADS mpirun $MAP -np $PROCS $DIR/$bm.$SIZE.$PROCS"
 		echo "Run $run - '$cmd'" | tee $name
+		energy=($(/home/mdiener/rapl_msr2))
+		start_package=(${energy[0]})
+		start_core=(${energy[1]})
+		start_dram=(${energy[2]})
 		sh -c "$cmd" | tee -a $name
+		energy=($(/home/mdiener/rapl_msr2))
+		end_package=(${energy[0]})
+		end_core=(${energy[1]})
+		end_dram=(${energy[2]})
+
+		echo "package energy: $(float_eval $end_package-$start_package)" | tee -a $name
+		echo "core energy: $(float_eval $end_core-$start_core)" | tee -a $name
+		echo "dram energy: $(float_eval $end_dram-$start_dram)" | tee -a $name
+
 		sleep 1
 	done
 done
