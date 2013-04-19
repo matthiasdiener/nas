@@ -62,7 +62,7 @@ do_map() {
 			;;
 
 		"ORACLE") #oracle mapping from machine file "oracle_$(hostname).sh"
-			varname=MAP_$bm$THREADS
+			varname=MAP_$bm$PROCS
 			MAP+=${!varname}
 			;;
 
