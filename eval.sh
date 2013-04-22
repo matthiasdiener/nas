@@ -38,3 +38,21 @@ for bm in *; do
 	grep  "dram energy" $bm/*.txt | awk '{print $3}'
 	echo
 done
+
+for bm in *; do
+	echo "$bm INSTRUCTIONS"
+	grep  " insns per cycle " $bm/*.txt | awk '{print $2}'
+	echo
+done
+
+for bm in *; do
+	echo "$bm L2 CACHE MISSES"
+	grep  "raw 0x224" $bm/*.txt | awk '{print $2}'
+	echo
+done
+
+for bm in *; do
+	echo "$bm L3 CACHE MISSES"
+	grep  "raw 0x412e" $bm/*.txt | awk '{print $2}'
+	echo
+done
