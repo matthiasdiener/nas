@@ -96,7 +96,7 @@ for bm in $BM; do
 	for run in $(seq 1 $RUNS); do
 		do_map $run $bm# calculate new mapping for this run
 		name=$OUTPATH/$bm/$(date|tr ' ' '-').txt # name of output file
-		cmd="OMP_NUM_THREADS=$THREADS sudo perf stat -a --log-fd 1 -e instructions -e r412e -e r0224 mpirun $MAP -np $PROCS $DIR/$bm.$SIZE.$PROCS"
+		cmd="OMP_NUM_THREADS=$THREADS perf stat -a --log-fd 1 -e instructions -e r412e -e r0224 mpirun $MAP -np $PROCS $DIR/$bm.$SIZE.$PROCS"
 		echo "Run $run - '$cmd'" | tee $name
 		energy=($(/home/mdiener/rapl_msr2))
 		start_package=(${energy[0]})
