@@ -20,7 +20,7 @@ lu: header
 
 MG: mg
 mg: header
-	cd MG; $(MAKE) -j8 -j8 CLASS=$(CLASS)
+	cd MG; $(MAKE) -j8 CLASS=$(CLASS)
 
 FT: ft
 ft: header
@@ -67,6 +67,7 @@ veryclean: clean
 	- rm -f bin/ep.* bin/cg.* bin/ua.* bin/dc.*
 
 header:
+	cd sys; ${MAKE} all
 	@ mkdir -p bin
 	@ sys/print_header
 

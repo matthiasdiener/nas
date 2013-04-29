@@ -65,5 +65,6 @@ clean:
 veryclean: clean
 
 header:
+	cd sys; ${MAKE} all
 	@ mkdir -p bin
 	@ sys/print_header
