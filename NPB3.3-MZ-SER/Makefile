@@ -37,5 +37,5 @@ veryclean: clean
 
 header:
 	cd sys; ${MAKE} all
-	@mkdir -p bin
+	@ mkdir -p bin
 	@ sys/print_header
