@@ -39,16 +39,15 @@ ep: header
 	cd EP; $(MAKE) -j8 CLASS=$(CLASS)
 
 UA: ua
-ua: header	       
+ua: header
 	cd UA; $(MAKE) -j8 CLASS=$(CLASS)
 
 DC: dc
-dc: header	       
+dc: header
 	cd DC; $(MAKE) -j8 CLASS=$(CLASS)
 
 # Awk script courtesy cmg@cray.com, modified by Haoqiang Jin
-suite:
-	@ mkdir -p bin
+suite: header
 	@ awk -f sys/suite.awk SMAKE=$(MAKE) $(SFILE) | $(SHELL)
 
 
@@ -56,13 +55,13 @@ suite:
 # are defined) but on a really clean system this won't work
 # because those makefiles need config/make.def
 clean:
-	- rm -f core 
+	- rm -f core
 	- rm -f *~ */core */*~ */*.o */npbparams.h */*.obj */*.exe
 	- rm -f sys/setparams sys/makesuite sys/setparams.h
-	- rm -f {DC/,}ADC.{logf,view,dat,viewsz,groupby,chunks}.* 
+	- rm -f {DC/,}ADC.{logf,view,dat,viewsz,groupby,chunks}.*
 
 veryclean: clean
-	- rm -f config/make.def config/suite.def 
+	- rm -f config/make.def config/suite.def
 	- rm -f bin/sp.* bin/lu.* bin/mg.* bin/ft.* bin/bt.* bin/is.*
 	- rm -f bin/ep.* bin/cg.* bin/ua.* bin/dc.*
 

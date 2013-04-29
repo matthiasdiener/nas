@@ -10,16 +10,16 @@ BT-MZ: bt-mz
 bt-mz: header
 	cd BT-MZ; $(MAKE) -j8 CLASS=$(CLASS) VERSION=$(VERSION)
 
-SP-MZ: sp-mz		       
-sp-mz: header	       
+SP-MZ: sp-mz
+sp-mz: header
 	cd SP-MZ; $(MAKE) -j8 CLASS=$(CLASS)
 
-LU-MZ: lu-mz		       
-lu-mz: header	       
+LU-MZ: lu-mz
+lu-mz: header
 	cd LU-MZ; $(MAKE) -j8 CLASS=$(CLASS) VERSION=$(VERSION)
 
 # Awk script courtesy cmg@cray.com
-suite:
+suite: header
 	@ awk -f sys/suite.awk SMAKE=$(MAKE) $(SFILE) | $(SHELL)
 
 
@@ -27,7 +27,7 @@ suite:
 # are defined) but on a really clean system this will won't work
 # because those makefiles need config/make.def
 clean:
-	- rm -f core 
+	- rm -f core
 	- rm -f *~ */core */*~ */*.o */npbparams.h */*.obj */*.exe
 	- rm -f sys/setparams sys/makesuite sys/setparams.h
 

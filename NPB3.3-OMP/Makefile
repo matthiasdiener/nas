@@ -10,45 +10,44 @@ BT: bt
 bt: header
 	cd BT; $(MAKE) -j8 CLASS=$(CLASS) VERSION=$(VERSION)
 
-SP: sp		       
-sp: header	       
+SP: sp
+sp: header
 	cd SP; $(MAKE) -j8 CLASS=$(CLASS)
 
-LU: lu		       
-lu: header	       
+LU: lu
+lu: header
 	cd LU; $(MAKE) -j8 CLASS=$(CLASS) VERSION=$(VERSION)
 
-MG: mg		       
-mg: header	       
+MG: mg
+mg: header
 	cd MG; $(MAKE) -j8 CLASS=$(CLASS)
 
-FT: ft		       
-ft: header	       
+FT: ft
+ft: header
 	cd FT; $(MAKE) -j8 CLASS=$(CLASS)
 
-IS: is		       
-is: header	       
+IS: is
+is: header
 	cd IS; $(MAKE) -j8 CLASS=$(CLASS)
 
-CG: cg		       
-cg: header	       
+CG: cg
+cg: header
 	cd CG; $(MAKE) -j8 CLASS=$(CLASS)
 
-EP: ep		       
-ep: header	       
+EP: ep
+ep: header
 	cd EP; $(MAKE) -j8 CLASS=$(CLASS)
 
 UA: ua
-ua: header	       
+ua: header
 	cd UA; $(MAKE) -j8 CLASS=$(CLASS)
 
 DC: dc
-dc: header	       
+dc: header
 	cd DC; $(MAKE) -j8 CLASS=$(CLASS)
 
 # Awk script courtesy cmg@cray.com, modified by Haoqiang Jin
-suite:
-	@ mkdir -p bin
+suite: header
 	@ awk -f sys/suite.awk SMAKE=$(MAKE) $(SFILE) | $(SHELL)
 
 
@@ -57,7 +56,7 @@ suite:
 # because those makefiles need config/make.def
 clean:
 	- rm -f bin/*
-	- rm -f core 
+	- rm -f core
 	- rm -f *~ */core */*~ */*.o */npbparams.h */*.obj */*.exe
 	- rm -f sys/setparams sys/makesuite sys/setparams.h
 	- rm -rf */rii_files

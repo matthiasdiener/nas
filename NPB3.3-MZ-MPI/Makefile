@@ -14,14 +14,13 @@ bt-mz: header
 SP-MZ: sp-mz
 sp-mz: header
 	cd SP-MZ; $(MAKE) -j8 CLASS=$(CLASS) NPROCS=$(NPROCS)
-		       
+
 LU-MZ: lu-mz
 lu-mz: header
 	cd LU-MZ; $(MAKE) -j8 CLASS=$(CLASS) NPROCS=$(NPROCS) VERSION=$(VERSION)
 
 # Awk script courtesy cmg@cray.com
-suite:
-	@ mkdir -p bin
+suite: header
 	@ awk -f sys/suite.awk SMAKE=$(MAKE) $(SFILE) | $(SHELL)
 
 
