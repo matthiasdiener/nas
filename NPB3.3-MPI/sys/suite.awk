@@ -1,7 +1,7 @@
 BEGIN { SMAKE = "make" } {
   if ($1 !~ /^#/ &&  NF > 2) {
     printf "cd `echo %s|tr '[a-z]' '[A-Z]'`; %s clean;", $1, SMAKE;
-    printf "%s -j8 CLASS=%s NPROCS=%s", SMAKE, $2, $3;
+    printf "%s -j CLASS=%s NPROCS=%s", SMAKE, $2, $3;
     if ( NF > 3 ) {
       if ( $4 ~ /^vec/ ||  $4 ~ /^VEC/ ) {
         printf " VERSION=%s", $4;
