@@ -9,15 +9,15 @@ default: header
 
 BT-MZ: bt-mz
 bt-mz: header
-	cd BT-MZ; $(MAKE) -j8 CLASS=$(CLASS) NPROCS=$(NPROCS) VERSION=$(VERSION)
+	cd BT-MZ; $(MAKE) -j CLASS=$(CLASS) NPROCS=$(NPROCS) VERSION=$(VERSION)
 
 SP-MZ: sp-mz
 sp-mz: header
-	cd SP-MZ; $(MAKE) -j8 CLASS=$(CLASS) NPROCS=$(NPROCS)
+	cd SP-MZ; $(MAKE) -j CLASS=$(CLASS) NPROCS=$(NPROCS)
 
 LU-MZ: lu-mz
 lu-mz: header
-	cd LU-MZ; $(MAKE) -j8 CLASS=$(CLASS) NPROCS=$(NPROCS) VERSION=$(VERSION)
+	cd LU-MZ; $(MAKE) -j CLASS=$(CLASS) NPROCS=$(NPROCS) VERSION=$(VERSION)
 
 # Awk script courtesy cmg@cray.com
 suite: header
