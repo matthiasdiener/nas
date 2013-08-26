@@ -45,7 +45,7 @@ c   Otherwise, we print the grid size n1xn2xn3
  5       format(' Iterations      = ', 12x, i12)
          
          write (*, 6) t
- 6       format(' Time in seconds = ',12x, f12.2)
+ 6       format(' Time in seconds = ',12x, f12.3)
          
          write (*,9) mops
  9       format(' Mop/s total     = ',12x, f12.2)
