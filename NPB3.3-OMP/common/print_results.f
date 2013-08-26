@@ -60,7 +60,7 @@ c   Otherwise, we print the grid size n1xn2xn3
  5       format(' Iterations      = ', 12x, i12)
          
          write (*, 6) t
- 6       format(' Time in seconds = ',12x, f12.2)
+ 6       format(' Time in seconds = ',12x, f12.3)
 
          write (*,7) num_threads
  7       format(' Total threads   = ', 12x, i12)

@@ -57,7 +57,7 @@ void c_print_results( char   *name,
 
     printf( " Iterations      =             %12d\n", niter );
  
-    printf( " Time in seconds =             %12.2f\n", t );
+    printf( " Time in seconds =             %12.3f\n", t );
 
     printf( " Total threads   =             %12d\n", num_threads);
 
