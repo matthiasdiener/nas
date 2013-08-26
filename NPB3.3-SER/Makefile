@@ -8,43 +8,43 @@ default: header
 
 BT: bt
 bt: header
-	cd BT; $(MAKE) -j8 CLASS=$(CLASS) VERSION=$(VERSION)
+	cd BT; $(MAKE) -j CLASS=$(CLASS) VERSION=$(VERSION)
 
 SP: sp
 sp: header
-	cd SP; $(MAKE) -j8 CLASS=$(CLASS)
+	cd SP; $(MAKE) -j CLASS=$(CLASS)
 
 LU: lu
 lu: header
-	cd LU; $(MAKE) -j8 CLASS=$(CLASS) VERSION=$(VERSION)
+	cd LU; $(MAKE) -j CLASS=$(CLASS) VERSION=$(VERSION)
 
 MG: mg
 mg: header
-	cd MG; $(MAKE) -j8 CLASS=$(CLASS)
+	cd MG; $(MAKE) -j CLASS=$(CLASS)
 
 FT: ft
 ft: header
-	cd FT; $(MAKE) -j8 CLASS=$(CLASS)
+	cd FT; $(MAKE) -j CLASS=$(CLASS)
 
 IS: is
 is: header
-	cd IS; $(MAKE) -j8 CLASS=$(CLASS)
+	cd IS; $(MAKE) -j CLASS=$(CLASS)
 
 CG: cg
 cg: header
-	cd CG; $(MAKE) -j8 CLASS=$(CLASS)
+	cd CG; $(MAKE) -j CLASS=$(CLASS)
 
 EP: ep
 ep: header
-	cd EP; $(MAKE) -j8 CLASS=$(CLASS)
+	cd EP; $(MAKE) -j CLASS=$(CLASS)
 
 UA: ua
 ua: header
-	cd UA; $(MAKE) -j8 CLASS=$(CLASS)
+	cd UA; $(MAKE) -j CLASS=$(CLASS)
 
 DC: dc
 dc: header
-	cd DC; $(MAKE) -j8 CLASS=$(CLASS)
+	cd DC; $(MAKE) -j CLASS=$(CLASS)
 
 # Awk script courtesy cmg@cray.com, modified by Haoqiang Jin
 suite: header

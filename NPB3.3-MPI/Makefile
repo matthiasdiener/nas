@@ -10,39 +10,39 @@ default: header
 
 BT: bt
 bt: header
-	cd BT; $(MAKE) -j8 NPROCS=$(NPROCS) CLASS=$(CLASS) SUBTYPE=$(SUBTYPE) VERSION=$(VERSION)
+	cd BT; $(MAKE) -j NPROCS=$(NPROCS) CLASS=$(CLASS) SUBTYPE=$(SUBTYPE) VERSION=$(VERSION)
 
 SP: sp
 sp: header
-	cd SP; $(MAKE) -j8 NPROCS=$(NPROCS) CLASS=$(CLASS)
+	cd SP; $(MAKE) -j NPROCS=$(NPROCS) CLASS=$(CLASS)
 
 LU: lu
 lu: header
-	cd LU; $(MAKE) -j8 NPROCS=$(NPROCS) CLASS=$(CLASS) VERSION=$(VERSION)
+	cd LU; $(MAKE) -j NPROCS=$(NPROCS) CLASS=$(CLASS) VERSION=$(VERSION)
 
 MG: mg
 mg: header
-	cd MG; $(MAKE) -j8 NPROCS=$(NPROCS) CLASS=$(CLASS)
+	cd MG; $(MAKE) -j NPROCS=$(NPROCS) CLASS=$(CLASS)
 
 FT: ft
 ft: header
-	cd FT; $(MAKE) -j8 NPROCS=$(NPROCS) CLASS=$(CLASS)
+	cd FT; $(MAKE) -j NPROCS=$(NPROCS) CLASS=$(CLASS)
 
 IS: is
 is: header
-	cd IS; $(MAKE) -j8 NPROCS=$(NPROCS) CLASS=$(CLASS)
+	cd IS; $(MAKE) -j NPROCS=$(NPROCS) CLASS=$(CLASS)
 
 CG: cg
 cg: header
-	cd CG; $(MAKE) -j8 NPROCS=$(NPROCS) CLASS=$(CLASS)
+	cd CG; $(MAKE) -j NPROCS=$(NPROCS) CLASS=$(CLASS)
 
 EP: ep
 ep: header
-	cd EP; $(MAKE) -j8 NPROCS=$(NPROCS) CLASS=$(CLASS)
+	cd EP; $(MAKE) -j NPROCS=$(NPROCS) CLASS=$(CLASS)
 
 DT: dt
 dt: header
-	cd DT; $(MAKE) -j8 CLASS=$(CLASS)
+	cd DT; $(MAKE) -j CLASS=$(CLASS)
 
 # Awk script courtesy cmg@cray.com, modified by Haoqiang Jin
 suite: header

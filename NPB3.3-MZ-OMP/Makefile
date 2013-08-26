@@ -8,15 +8,15 @@ default: header
 
 BT-MZ: bt-mz
 bt-mz: header
-	cd BT-MZ; $(MAKE) -j8 CLASS=$(CLASS) VERSION=$(VERSION)
+	cd BT-MZ; $(MAKE) -j CLASS=$(CLASS) VERSION=$(VERSION)
 
 SP-MZ: sp-mz
 sp-mz: header
-	cd SP-MZ; $(MAKE) -j8 CLASS=$(CLASS)
+	cd SP-MZ; $(MAKE) -j CLASS=$(CLASS)
 
 LU-MZ: lu-mz
 lu-mz: header
-	cd LU-MZ; $(MAKE) -j8 CLASS=$(CLASS) VERSION=$(VERSION)
+	cd LU-MZ; $(MAKE) -j CLASS=$(CLASS) VERSION=$(VERSION)
 
 # Awk script courtesy cmg@cray.com
 suite: header
