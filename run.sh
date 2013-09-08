@@ -6,22 +6,22 @@ ORACLE_FILE=oracle_$(hostname).sh
 source $ORACLE_FILE
 
 usage() {
-	echo "Usage: $0 <version> <#procs> <#threads> <#runs> <size> <benchmarks> <mapping>"
+	echo "Usage: $0 <version> <#processes> <#threads> <#runs> <size> <benchmarks> <mapping>"
 	echo "Available Mappings: round-robin (RR), random static (RS), operating system (OS), Oracle (ORACLE)"
 	exit $1
 }
 
 [ $# -eq 7 ] || usage 1
 
-VER=${1^^}
-PROCS=$2
-THREADS=$3
-RUNS=$4
-SIZE=${5^^}
-BM=${6,,}
-MAP_ALGO=${7^^}
+VER=${1^^} # NAS Version, omp, mpi, ...
+PROCESSES=$2 # number of processes
+THREADS=$3 # number of threads per process
+RUNS=$4 # number of executions
+SIZE=${5^^} # input size: A, B, ...
+BM=${6,,} # name of benchmarks
+MAP_ALGO=${7^^} # mapping algorithm to use
 
-PUS=$(cat /proc/cpuinfo | grep processor | tail -1 | awk '{print $3}')
+PUS=$(cat /proc/cpuinfo | grep processor | tail -1 | awk '{print $3}') # get number of processing units for random static mapping
 
 
 do_map() {
@@ -61,8 +61,8 @@ do_map() {
 			MAP=""
 			;;
 
-		"ORACLE") #oracle mapping from machine file "oracle_$(hostname).sh"
-			varname=MAP_$bm$PROCS
+		"ORACLE") # oracle mapping from machine file "oracle_$(hostname).sh"
+			varname=MAP_$bm$PROCESSES
 			MAP+=${!varname}
 			;;
 
@@ -75,7 +75,7 @@ do_map() {
 
 DIR="NPB3.3-$VER/bin"
 
-OUTPATH=results/$VER/P$PROCS-T$THREADS/$SIZE/$MAP_ALGO
+OUTPATH=results/$VER/P$PROCESSES-T$THREADS/$SIZE/$MAP_ALGO # where to save the log files
 
 function float_eval()
 {
@@ -94,16 +94,22 @@ function float_eval()
 for bm in $BM; do
 	mkdir -p $OUTPATH/$bm
 	for run in $(seq 1 $RUNS); do
-		do_map $run $bm# calculate new mapping for this run
+
+		do_map $run $bm  # calculate new mapping for this run
+
 		name=$OUTPATH/$bm/$(date|tr ' ' '-').txt # name of output file
-		cmd="OMP_NUM_THREADS=$THREADS perf stat -a --log-fd 1 -e instructions -e r412e -e r0224 mpirun $MAP -np $PROCS $DIR/$bm.$SIZE.$PROCS"
+
+		cmd="OMP_NUM_THREADS=$THREADS perf stat -a --log-fd 1 -e instructions -e r412e -e r0224 mpirun $MAP -np $PROCESSES $DIR/$bm.$SIZE.$PROCESSES" # r412e: LLC misses; r0224: l2 data misses
 		echo "Run $run - '$cmd'" | tee $name
-		energy=($(/home/mdiener/rapl_msr2))
+
+		energy=($(/home/mdiener/rapl_msr2)) # get energy before start
 		start_package=(${energy[0]})
 		start_core=(${energy[1]})
 		start_dram=(${energy[2]})
-		sh -c "$cmd" | tee -a $name
-		energy=($(/home/mdiener/rapl_msr2))
+
+		sh -c "$cmd" | tee -a $name # execute benchmark
+
+		energy=($(/home/mdiener/rapl_msr2)) # get energy after start
 		end_package=(${energy[0]})
 		end_core=(${energy[1]})
 		end_dram=(${energy[2]})
