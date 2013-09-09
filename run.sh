@@ -99,17 +99,17 @@ for bm in $BM; do
 
 		name=$OUTPATH/$bm/$(date|tr ' ' '-').txt # name of output file
 
-		cmd="OMP_NUM_THREADS=$THREADS perf stat -a --log-fd 1 -e instructions -e r412e -e r0224 mpirun $MAP -np $PROCESSES $DIR/$bm.$SIZE.$PROCESSES" # r412e: LLC misses; r0224: l2 data misses
+		cmd="OMP_NUM_THREADS=$THREADS perf stat -a --log-fd 1 -e instructions -e r412e -e r0224 $DIR/$bm.$SIZE.x" # r412e: LLC misses; r0224: l2 data misses
 		echo "Run $run - '$cmd'" | tee $name
 
-		energy=($(/home/mdiener/rapl_msr2)) # get energy before start
+		energy=($(rapl_msr2)) # get energy before start
 		start_package=(${energy[0]})
 		start_core=(${energy[1]})
 		start_dram=(${energy[2]})
 
 		sh -c "$cmd" | tee -a $name # execute benchmark
 
-		energy=($(/home/mdiener/rapl_msr2)) # get energy after start
+		energy=($(rapl_msr2)) # get energy after start
 		end_package=(${energy[0]})
 		end_core=(${energy[1]})
 		end_dram=(${energy[2]})
