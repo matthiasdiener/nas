@@ -138,8 +138,8 @@ c---------------------------------------------------------------------
 c---------------------------------------------------------------------
 c      do one time step to touch all code, and reinitialize
 c---------------------------------------------------------------------
-       call adi
-       call initialize
+c       call adi
+c       call initialize
 
        do i = 1, t_last
           call timer_clear(i)
