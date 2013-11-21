@@ -8,41 +8,43 @@ SFILE=config/suite.def
 default: header
 	@ sys/print_instructions
 
+MAKEFLAGS=-j
+
 BT: bt
 bt: header
-	cd BT; $(MAKE) -j NPROCS=$(NPROCS) CLASS=$(CLASS) SUBTYPE=$(SUBTYPE) VERSION=$(VERSION)
+	cd BT; $(MAKE) NPROCS=$(NPROCS) CLASS=$(CLASS) SUBTYPE=$(SUBTYPE) VERSION=$(VERSION)
 
 SP: sp
 sp: header
-	cd SP; $(MAKE) -j NPROCS=$(NPROCS) CLASS=$(CLASS)
+	cd SP; $(MAKE) NPROCS=$(NPROCS) CLASS=$(CLASS)
 
 LU: lu
 lu: header
-	cd LU; $(MAKE) -j NPROCS=$(NPROCS) CLASS=$(CLASS) VERSION=$(VERSION)
+	cd LU; $(MAKE) NPROCS=$(NPROCS) CLASS=$(CLASS) VERSION=$(VERSION)
 
 MG: mg
 mg: header
-	cd MG; $(MAKE) -j NPROCS=$(NPROCS) CLASS=$(CLASS)
+	cd MG; $(MAKE) NPROCS=$(NPROCS) CLASS=$(CLASS)
 
 FT: ft
 ft: header
-	cd FT; $(MAKE) -j NPROCS=$(NPROCS) CLASS=$(CLASS)
+	cd FT; $(MAKE) NPROCS=$(NPROCS) CLASS=$(CLASS)
 
 IS: is
 is: header
-	cd IS; $(MAKE) -j NPROCS=$(NPROCS) CLASS=$(CLASS)
+	cd IS; $(MAKE) NPROCS=$(NPROCS) CLASS=$(CLASS)
 
 CG: cg
 cg: header
-	cd CG; $(MAKE) -j NPROCS=$(NPROCS) CLASS=$(CLASS)
+	cd CG; $(MAKE) NPROCS=$(NPROCS) CLASS=$(CLASS)
 
 EP: ep
 ep: header
-	cd EP; $(MAKE) -j NPROCS=$(NPROCS) CLASS=$(CLASS)
+	cd EP; $(MAKE) NPROCS=$(NPROCS) CLASS=$(CLASS)
 
 DT: dt
 dt: header
-	cd DT; $(MAKE) -j CLASS=$(CLASS)
+	cd DT; $(MAKE) CLASS=$(CLASS)
 
 # Awk script courtesy cmg@cray.com, modified by Haoqiang Jin
 suite: header

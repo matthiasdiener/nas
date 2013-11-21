@@ -6,45 +6,47 @@ SFILE=config/suite.def
 default: header
 	@ sys/print_instructions
 
+MAKEFLAGS=-j
+
 BT: bt
 bt: header
-	cd BT; $(MAKE) -j CLASS=$(CLASS) VERSION=$(VERSION)
+	cd BT; $(MAKE) CLASS=$(CLASS) VERSION=$(VERSION)
 
 SP: sp
 sp: header
-	cd SP; $(MAKE) -j CLASS=$(CLASS)
+	cd SP; $(MAKE) CLASS=$(CLASS)
 
 LU: lu
 lu: header
-	cd LU; $(MAKE) -j CLASS=$(CLASS) VERSION=$(VERSION)
+	cd LU; $(MAKE) CLASS=$(CLASS) VERSION=$(VERSION)
 
 MG: mg
 mg: header
-	cd MG; $(MAKE) -j CLASS=$(CLASS)
+	cd MG; $(MAKE) CLASS=$(CLASS)
 
 FT: ft
 ft: header
-	cd FT; $(MAKE) -j CLASS=$(CLASS)
+	cd FT; $(MAKE) CLASS=$(CLASS)
 
 IS: is
 is: header
-	cd IS; $(MAKE) -j CLASS=$(CLASS)
+	cd IS; $(MAKE) CLASS=$(CLASS)
 
 CG: cg
 cg: header
-	cd CG; $(MAKE) -j CLASS=$(CLASS)
+	cd CG; $(MAKE) CLASS=$(CLASS)
 
 EP: ep
 ep: header
-	cd EP; $(MAKE) -j CLASS=$(CLASS)
+	cd EP; $(MAKE) CLASS=$(CLASS)
 
 UA: ua
 ua: header
-	cd UA; $(MAKE) -j CLASS=$(CLASS)
+	cd UA; $(MAKE) CLASS=$(CLASS)
 
 DC: dc
 dc: header
-	cd DC; $(MAKE) -j CLASS=$(CLASS)
+	cd DC; $(MAKE) CLASS=$(CLASS)
 
 # Awk script courtesy cmg@cray.com, modified by Haoqiang Jin
 suite: header
