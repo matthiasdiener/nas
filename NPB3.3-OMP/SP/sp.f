@@ -111,7 +111,7 @@ c---------------------------------------------------------------------
        write(*, *)
 
  1000  format(//, ' NAS Parallel Benchmarks (NPB3.3-OMP)',
-     >            ' - SP Benchmark', /)
+     >            ' - SP Benchmark NOFT', /)
  1001  format(' Size: ', i4, 'x', i4, 'x', i4)
  1002  format(' Iterations: ', i4, '    dt:  ', F11.7)
  1003  format(' Number of available threads: ', i5)
@@ -140,8 +140,8 @@ c---------------------------------------------------------------------
 c---------------------------------------------------------------------
 c      do one time step to touch all code, and reinitialize
 c---------------------------------------------------------------------
-       call adi
-       call initialize
+c       call adi
+c       call initialize
 
        do i = 1, t_last
           call timer_clear(i)
