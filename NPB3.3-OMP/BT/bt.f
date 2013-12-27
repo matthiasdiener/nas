@@ -111,7 +111,7 @@ c---------------------------------------------------------------------
        write(*, *)
 
  1000  format(//, ' NAS Parallel Benchmarks (NPB3.3-OMP)',
-     >            ' - BT Benchmark', /)
+     >            ' - BT Benchmark NOFT', /)
  1001  format(' Size: ', i4, 'x', i4, 'x', i4)
  1002  format(' Iterations: ', i4, '       dt: ', F11.7)
  1003  format(' Number of available threads: ', i5)
