@@ -709,7 +709,7 @@ int main(int argc,char **argv ){
         fprintf(stderr,"     the number of nodes in the graph\n");
       }
       MPI_Finalize();
-      exit(0);
+      exit(1);
 }
     if(timer_on&&dg->numNodes+1>timers_tot){
       timer_on=0;
@@ -724,7 +724,7 @@ int main(int argc,char **argv ){
         fprintf(stderr,"**  Number nodes in the graph = %d\n",dg->numNodes);
       }
       MPI_Finalize();
-      exit(0);
+      exit(1);
     }
     for(i=0;i<dg->numNodes;i++){ 
       dg->node[i]->address=i;
@@ -765,5 +765,5 @@ int main(int argc,char **argv ){
         	       CLINKFLAGS );
     }          
     MPI_Finalize();
-  return 1;
+  return 0;
 }
