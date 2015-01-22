@@ -11,6 +11,7 @@ CCOMPILE_pp = $(CC_pp)  -c $(C_INC_pp) $(CFLAGS_pp)
 CLASS=U
 
 default:: ${PROGRAM}
+	cp ${PROGRAM} $(subst .x,,${PROGRAM})
 
 # This makes sure the configuration utility setparams 
 # is up to date. 
