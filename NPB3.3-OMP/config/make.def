@@ -52,7 +52,7 @@ FFLAGS	= -O2 -g -fopenmp
 # Global *link time* flags. Flags for increasing maximum executable 
 # size usually go here. 
 #---------------------------------------------------------------------------
-FLINKFLAGS = -O2 -fopenmp -static -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
+FLINKFLAGS = -O2 -fopenmp
 
 
 #---------------------------------------------------------------------------
@@ -110,7 +110,7 @@ CFLAGS	= -O2 -g -fopenmp
 # Global *link time* flags. Flags for increasing maximum executable 
 # size usually go here. 
 #---------------------------------------------------------------------------
-CLINKFLAGS = -O2 -fopenmp -static -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
+CLINKFLAGS = -O2 -fopenmp
 
 
 #---------------------------------------------------------------------------
