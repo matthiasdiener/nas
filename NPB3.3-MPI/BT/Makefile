@@ -56,7 +56,7 @@ exec: $(OBJS)
 
 bt-bt: ${OBJS} btio.o
 	${FLINK} ${FLINKFLAGS} -o ${PROGRAM} ${OBJS} btio.o ${FMPI_LIB}
-	[ ${NPROCS} -eq 25 ] && ln -sf ${PROGRAM} $(BINDIR)/$(BENCHMARK).$(CLASS).32.x && ln -sf $(subst .x,,${PROGRAM}) $(BINDIR)/$(BENCHMARK).$(CLASS).32
+	if [ ${NPROCS} -eq 25 ]; then ln -sf ${PROGRAM} $(BINDIR)/$(BENCHMARK).$(CLASS).32.x ; ln -sf $(subst .x,,${PROGRAM}) $(BINDIR)/$(BENCHMARK).$(CLASS).32 ; fi
 
 bt-full: ${OBJS} full_mpiio.o btio_common.o
 	${FLINK} ${FLINKFLAGS} -o ${PROGRAM}.mpi_io_full ${OBJS} btio_common.o full_mpiio.o ${FMPI_LIB}

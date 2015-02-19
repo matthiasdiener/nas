@@ -25,7 +25,7 @@ include ../sys/make.common
 
 ${PROGRAM}: config ${OBJS}
 	${FLINK} ${FLINKFLAGS} -o ${PROGRAM} ${OBJS} ${FMPI_LIB}
-	[ ${NPROCS} -eq 25 ] && ln -sf ${PROGRAM} $(BINDIR)/$(BENCHMARK).$(CLASS).32.x && ln -sf $(subst .x,,${PROGRAM}) $(BINDIR)/$(BENCHMARK).$(CLASS).32
+	if [ ${NPROCS} -eq 25 ]; then ln -sf ${PROGRAM} $(BINDIR)/$(BENCHMARK).$(CLASS).32.x ; ln -sf $(subst .x,,${PROGRAM}) $(BINDIR)/$(BENCHMARK).$(CLASS).32 ; fi
 
 .f.o:
 	${FCOMPILE} $<
