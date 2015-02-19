@@ -6,14 +6,14 @@ include ../config/make.def
 
 include ../sys/make.common
 #Override PROGRAM
-DTPROGRAM  = $(BINDIR)/$(BENCHMARK).$(CLASS).x
+# DTPROGRAM  = $(BINDIR)/$(BENCHMARK).$(CLASS).x
 
 OBJS = dt.o DGraph.o \
 	${COMMON}/c_print_results.o ${COMMON}/c_timers.o ${COMMON}/c_randdp.o
 
 
 ${PROGRAM}: config ${OBJS}
-	${CLINK} ${CLINKFLAGS} -o ${DTPROGRAM} ${OBJS} ${CMPI_LIB}
+	${CLINK} ${CLINKFLAGS} -o ${PROGRAM} ${OBJS} ${CMPI_LIB}
 
 .c.o:
 	${CCOMPILE} $<
