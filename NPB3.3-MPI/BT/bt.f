@@ -320,8 +320,6 @@ c---------------------------------------------------------------------
           end do
        endif
        
-       call libmapping_process_end
-       
  800   format(' nprocs =', i6, 11x, 'minimum', 5x, 'maximum', 
      >        5x, 'average')
  810   format(' timer ', i2, '(', A8, ') :', 3(2x,f10.4))
@@ -329,6 +327,8 @@ c---------------------------------------------------------------------
  999   continue
        call mpi_barrier(MPI_COMM_WORLD, error)
        call mpi_finalize(error)
+
+       call libmapping_process_end
 
        end
 

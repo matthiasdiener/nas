@@ -36,7 +36,7 @@ FLINK	= $(MPIF77)
 #---------------------------------------------------------------------------
 # These macros are passed to the linker to help link with MPI correctly
 #---------------------------------------------------------------------------
-FMPI_LIB  = -L../../../libmapping/tools -lmapexternal
+FMPI_LIB  = -L../../../libmapping/tools -lmapexternal -lrt
 
 #---------------------------------------------------------------------------
 # These macros are passed to the compiler to help find 'mpif.h'
