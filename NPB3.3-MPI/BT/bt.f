@@ -319,6 +319,9 @@ c---------------------------------------------------------------------
              write(*, 810) i, t_recs(i), tming(i), tmaxg(i), tsum(i)
           end do
        endif
+       
+       call libmapping_process_end
+       
  800   format(' nprocs =', i6, 11x, 'minimum', 5x, 'maximum', 
      >        5x, 'average')
  810   format(' timer ', i2, '(', A8, ') :', 3(2x,f10.4))
