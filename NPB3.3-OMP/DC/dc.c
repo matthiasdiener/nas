@@ -293,6 +293,7 @@ int32 DC(ADC_VIEW_PARS *adcpp) {
   		   C_INC,
   		   CFLAGS,
   		   CLINKFLAGS); 
+   system("rm -f ADC.*.0");
    return ADC_OK;
 }
 
