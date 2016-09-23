@@ -6,8 +6,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
 bm="bt cg ep ft is lu mg sp ua"
+input=B
 
-OUTDIR=~/Dropbox/results/$(hostname)/$(basename $DIR)/
+OUTDIR=~/Dropbox/results/$(hostname)/$(basename $DIR)/$input
 mkdir -p $OUTDIR
 
 # does not work with quotation marks:
@@ -18,11 +19,11 @@ for b in $bm; do
 	exe echo "running $b"
 	exe date
 	exe uname -a
-	[[ -x /usr/bin/hwloc-ls ]] && exe hwloc-ls
+	[[ -x /usr/bin/hwloc-ls ]] && exe hwloc-ls --of console
 
 	exe export GOMP_CPU_AFFINITY=0-227 KMP_AFFINITY=explicit,verbose,proclist=[0-227]
 	exe pwd
 	exe git log -1 --oneline
-	exe sudo -E perf stat -A -a -e instructions,cache-misses,cache-references,cycles bin/$b.B
+	exe sudo -E perf stat -A -a -e instructions,cache-misses,cache-references,cycles bin/$b.$input
 done
 
